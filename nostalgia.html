@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nostalgia Dive — Sylvia Ai</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="icon.png">
+  <style>
+    :root{
+      --bg:#071014;
+      --card:#0e1112;
+      --neon:#ffd36b;
+      --muted: rgba(255,255,255,0.12);
+      --accent:#8ad7ff;
+      --panel: rgba(255,255,255,0.02);
+      --glass: rgba(255,255,255,0.03);
+      --text:#e8f6f9;
+    }
+
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#041018,#071014);font-family:'Poppins',sans-serif;color:var(--text)}
+    .wrap{max-width:1100px;margin:36px auto;padding:28px;display:flex;flex-direction:column;gap:18px}
+    .header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .title{font-weight:800;font-size:28px;color:var(--neon)}
+    .subtitle{color:rgba(255,255,255,0.6);font-size:13px}
+    .header-center {
+  text-align: center;
+  width: 100%;
+  margin-bottom: 10px;
+  }
+
+    /* memory rooms */
+    .rooms{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}
+    .room{background:var(--card);border-radius:12px;padding:18px;border:1px solid var(--glass);cursor:pointer;transition:transform .18s ease, box-shadow .18s ease}
+    .room:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(0,0,0,0.6)}
+    .room.selected{outline:2px solid var(--neon);box-shadow:0 22px 50px rgba(255,211,107,0.06)}
+    .room h4{margin:0 0 6px 0;font-size:16px}
+    .room p{margin:0;color:rgba(255,255,255,0.6);font-size:13px}
+
+    /* extra controls */
+    .controls-row{display:flex;gap:12px;align-items:center;margin-top:18px}
+    input[type="text"], input[type="number"], select, textarea{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--text);padding:10px;border-radius:10px;min-width:0}
+    textarea{min-height:68px;resize:vertical}
+    button{padding:10px 16px;border-radius:10px;border:0;cursor:pointer;font-weight:700}
+    .btn-primary{background:var(--neon);color:#1a1200}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--text)}
+
+    /* results */
+    .results{margin-top:20px;display:grid;grid-template-columns:1fr 360px;gap:18px}
+    .panel{background:var(--panel);padding:14px;border-radius:12px;border:1px solid var(--glass)}
+    .playlist{display:flex;flex-direction:column;gap:10px}
+    .track{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:rgba(0,0,0,0.15)}
+    .track .meta{display:flex;flex-direction:column}
+    .track .title{font-weight:700}
+    .track .artist{color:rgba(255,255,255,0.7);font-size:13px}
+    .hint{font-size:13px;color:rgba(255,255,255,0.6);margin-top:8px}
+
+    /* loading */
+    .loader{display:inline-block;padding:10px 12px;border-radius:999px;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.03))}
+    .muted{color:rgba(255,255,255,0.55)}
+
+    /* responsive */
+    @media (max-width:960px){
+      .rooms{grid-template-columns:repeat(2,1fr)}
+      .results{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrap">
+    <div class="header-center">
+      <div>
+        <div class="title">Nostalgia Dive</div>
+        <div class="subtitle">Choose a memory room — we'll surface songs that feel like that era.</div>
+      </div>
+  
+    </div>
+
+    <!-- Rooms -->
+    <div class="rooms" id="roomsContainer">
+      <div class="room" data-type="childhood" tabindex="0">
+        <h4>Childhood (0–10)</h4>
+        <p>Cartoons, playgrounds, uncomplicated laughter — the palette of early life.</p>
+      </div>
+
+      <div class="room" data-type="teen" tabindex="0">
+        <h4>Teen years (11–16)</h4>
+        <p>Firsts, angsty anthems, school corridors and late-night playlists.</p>
+      </div>
+
+      <div class="room" data-type="year" tabindex="0">
+        <h4>Specific year</h4>
+        <p>Pick a year — we'll pull songs that match that era's sound.</p>
+      </div>
+
+      <div class="room" data-type="prompt" tabindex="0">
+        <h4>Memory prompt</h4>
+        <p>Describe a memory (short). We'll surface tunes that match the scene.</p>
+      </div>
+    </div>
+
+    <!-- controls -->
+    <div class="controls-row" id="controlsRow">
+      <div id="extraInputs" style="display:flex;gap:10px;align-items:center">
+        <!-- specific year input -->
+        <input id="yearInput" type="number" min="1950" max="2025" placeholder="Year (e.g. 2008)" style="display:none"/>
+
+        <!-- memory prompt -->
+        <textarea id="promptInput" placeholder="Type a short memory — e.g. 'summer at my nani's house' (optional)" style="display:none"></textarea>
+      </div>
+
+      <select id="vibeSelect" title="Vibe">
+        <option value="nostalgic">Nostalgic</option>
+        <option value="melancholic">Melancholic</option>
+        <option value="joyful">Joyful</option>
+        <option value="reflective">Reflective</option>
+      </select>
+
+      <button id="generateBtn" class="btn-primary">Generate Nostalgia</button>
+      <button id="resetBtn" class="btn-ghost">Reset</button>
+      <div id="status" class="muted" style="margin-left:8px"></div>
+    </div>
+
+    <!-- results -->
+    <div class="results" id="resultsArea">
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>Playlist</strong>
+          <div id="playlistInfo" class="muted">No results yet</div>
+        </div>
+
+        <div id="tracks" class="playlist" style="margin-top:12px"></div>
+        <div id="noResultsHint" class="hint muted" style="display:none">No results — try a different room or widen the year.</div>
+      </div>
+
+      <div class="panel">
+        <strong>Memory Snapshot</strong>
+        <div id="snapshot" style="margin-top:12px;color:rgba(255,255,255,0.85)">When you pick a room and generate, we'll create a short capsule of the mood and a few recommended actions to lean into the memory.</div>
+
+        <div style="margin-top:12px">
+          <strong>Quick prompts</strong>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+            <button class="btn-ghost quick" data-prompt="first crush at the school fair">First crush at the fair</button>
+            <button class="btn-ghost quick" data-prompt="rainy day reading by the window">Rainy day reading</button>
+            <button class="btn-ghost quick" data-prompt="summer festival with cousins">Summer festival</button>
+            <button class="btn-ghost quick" data-prompt="late night drives with friends">Late night drives</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---- setup
+    const roomsContainer = document.getElementById('roomsContainer');
+    const rooms = Array.from(roomsContainer.querySelectorAll('.room'));
+    const yearInput = document.getElementById('yearInput');
+    const promptInput = document.getElementById('promptInput');
+    const generateBtn = document.getElementById('generateBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const vibeSelect = document.getElementById('vibeSelect');
+    const status = document.getElementById('status');
+    const tracksEl = document.getElementById('tracks');
+    const playlistInfo = document.getElementById('playlistInfo');
+    const snapshot = document.getElementById('snapshot');
+    const noResultsHint = document.getElementById('noResultsHint');
+
+
+    // read mood from URL if any (flow-mode)
+    const urlParams = new URLSearchParams(window.location.search);
+    const carriedMood = (urlParams.get('mood') || '').toLowerCase();
+    const carriedScore = urlParams.get('score');
+
+    let selectedRoom = null;
+
+    // helpers
+    function setStatus(t, err=false){
+      status.textContent = t || '';
+      status.style.color = err ? 'salmon' : '#b4fff0';
+    }
+
+    function clearResults(){
+      tracksEl.innerHTML = '';
+      playlistInfo.textContent = 'No results yet';
+      noResultsHint.style.display = 'none';
+    }
+
+    function selectRoom(roomEl){
+      rooms.forEach(r => r.classList.remove('selected'));
+      roomEl.classList.add('selected');
+      selectedRoom = roomEl.dataset.type;
+      // show inputs based on selection
+      yearInput.style.display = selectedRoom === 'year' ? 'inline-block' : 'none';
+      promptInput.style.display = selectedRoom === 'prompt' ? 'block' : 'none';
+      clearResults();
+      snapshot.textContent = 'Ready — pick vibe and press Generate Nostalgia.';
+    }
+
+    // keyboard accessible
+    rooms.forEach(r => {
+      r.addEventListener('click', () => selectRoom(r));
+      r.addEventListener('keydown', (e) => { if(e.key === 'Enter' || e.key === ' ') selectRoom(r); });
+    });
+
+    // quick prompts
+    document.querySelectorAll('.quick').forEach(b => {
+      b.addEventListener('click', () => {
+        const p = b.dataset.prompt;
+        // open prompt input if needed and set it
+        selectRoom(document.querySelector('.room[data-type="prompt"]'));
+        promptInput.value = p;
+      });
+    });
+
+    // build server payload based on selection
+    function buildPayload(){
+      if(!selectedRoom) return null;
+      const vibe = vibeSelect.value;
+      const payload = { mode: selectedRoom, vibe, mood: carriedMood || 'neutral' };
+      if(selectedRoom === 'year'){
+        const y = parseInt(yearInput.value, 10);
+        if(!y) return { error: 'Please enter a year.' };
+        payload.year = y;
+      } else if(selectedRoom === 'prompt'){
+        const text = (promptInput.value || '').trim();
+        if(!text) return { error: 'Please describe a short memory.' };
+        payload.prompt = text;
+      }
+      // include score if available
+      if(carriedScore) payload.score = carriedScore;
+      return payload;
+    }
+
+    // render tracks (no audio preview)
+    function renderTracks(list, meta){
+      tracksEl.innerHTML = '';
+      if(!list || !list.length){
+        noResultsHint.style.display = 'block';
+        playlistInfo.textContent = 'No songs';
+        return;
+      }
+      noResultsHint.style.display = 'none';
+      playlistInfo.textContent = `${list.length} tracks • ${meta?.label || 'Nostalgia mix'}`;
+      list.forEach(t => {
+        const tr = document.createElement('div');
+        tr.className = 'track';
+        tr.innerHTML = `
+          <div class="meta">
+            <div class="title">${t.title}</div>
+            <div class="artist">${t.artist}</div>
+          </div>
+          <div><a href="${t.url}" target="_blank">Open →</a></div>
+        `;
+        tracksEl.appendChild(tr);
+      });
+    }
+
+    // snapshot generation (client-side summary)
+    function buildSnapshot(payload, list){
+      const roomLabel = selectedRoom === 'childhood' ? 'Childhood' :
+                        selectedRoom === 'teen' ? 'Teen years' :
+                        selectedRoom === 'year' ? `Year ${payload.year}` :
+                        'Personal memory';
+      const vibe = payload.vibe || 'nostalgic';
+      const count = (list && list.length) ? list.length : 0;
+      return `${roomLabel} • ${vibe}. Found ${count} songs to match your memory. Try listening and note the first image that appears — that’s the memory anchor.`;
+    }
+
+    // Main generate function
+    async function generateNostalgia(){
+      clearResults();
+      setStatus('');
+      const payload = buildPayload();
+      if(!payload) return setStatus('Pick a room first.', true);
+      if(payload.error) return setStatus(payload.error, true);
+
+      setStatus('Finding songs…');
+      generateBtn.disabled = true;
+
+      try {
+        // POST to an endpoint. If your server doesn't have /spotify/nostalgia,
+        // you can implement it to accept payload.mode / .year / .prompt and return {tracks:[], meta:{}}
+        const res = await fetch('/spotify/nostalgia', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(payload)
+        });
+
+        // fallback: if 404, try using /spotify/therapy as a simple fallback (best-effort)
+        let data;
+        if(res.status === 404){
+          setStatus('Server endpoint not found — trying fallback...', true);
+          // Best-effort: construct a mood-based call to /spotify/therapy with query hints
+          const hint = payload.mode === 'year' ? (payload.year + '') : (payload.prompt || payload.mode);
+          const fb = await fetch('/spotify/therapy', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ mood: payload.mood || 'neutral', language: 'english' })
+          });
+          data = await fb.json();
+          // map to generic tracks if present
+          data = data || { stage1: [], stage2: [], stage3: [] };
+          const flat = [...(data.stage1||[]), ...(data.stage2||[]), ...(data.stage3||[])];
+          renderTracks(flat.slice(0,8), { label: 'Fallback mix' });
+          setStatus('Fallback results shown (server lacks nostalgia route).', true);
+          generateBtn.disabled = false;
+          snapshot.textContent = 'Fallback snapshot — implement /spotify/nostalgia on server to improve results.';
+          return;
+        } else {
+          data = await res.json();
+        }
+
+        if(!res.ok) {
+          setStatus(data.error || 'Server error', true);
+          generateBtn.disabled = false;
+          return;
+        }
+
+        // Expecting: { tracks: [{title,artist,url}], meta: {label: '...'} }
+        renderTracks(data.tracks || [], data.meta || {});
+        snapshot.textContent = buildSnapshot(payload, data.tracks || []);
+        setStatus('Done — enjoy your nostalgia dive!');
+      } catch (err){
+        console.error(err);
+        setStatus('Network error — check server', true);
+      } finally {
+        generateBtn.disabled = false;
+      }
+    }
+
+    // wire generate
+    generateBtn.addEventListener('click', generateNostalgia);
+
+    // reset
+    resetBtn.addEventListener('click', () => {
+      rooms.forEach(r => r.classList.remove('selected'));
+      selectedRoom = null;
+      yearInput.value = '';
+      promptInput.value = '';
+      clearResults();
+      setStatus('');
+      snapshot.textContent = 'When you pick a room and generate, we will create a short memory capsule.';
+    });
+
+    // quick UX: select childhood by default
+    selectRoom(rooms[0]);
+
+    // expose small keyboard shortcuts (n = new)
+    window.addEventListener('keydown', (e) => {
+      if(e.key === 'n') {
+        // focus first room
+        rooms[0].focus();
+      }
+    });
+
+  </script>
+</body>
+</html>

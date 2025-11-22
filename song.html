@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Music Assistance — Artificial Human</title>
+ <link rel="icon" type="image/png" href="icon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#0d0d0d;
+      --neon:#0aff9d;
+      --glass:rgba(255,255,255,0.03);
+      --muted:rgba(255,255,255,0.55);
+      --hover:rgba(0,255,170,0.12);
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .title {
+      font-size: 46px;
+      font-weight: 800;
+      color: var(--neon);
+      letter-spacing: 1px;
+      text-shadow: 0 0 20px rgba(10,255,160,0.2);
+    }
+
+    .subtitle {
+      font-size: 18px;
+      margin-top: -8px;
+      color: var(--muted);
+    }
+
+    /* ---- 2×2 Grid ---- */
+    .options {
+      margin-top: 50px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+      padding: 10px;
+    }
+
+    .card {
+      background: var(--glass);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 48px 32px;
+      min-height: 200px;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+
+      cursor: pointer;
+      transition: 0.25s ease;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.55);
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+      background: var(--hover);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.75);
+    }
+
+    .card-title {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .card-desc {
+      font-size: 15px;
+      color: var(--muted);
+      text-align: left;
+      line-height: 1.5;
+      max-width: 90%;
+    }
+
+    .back-btn {
+      margin: 50px auto 0 auto;
+      background: var(--neon);
+      color: #04120a;
+      border: none;
+      padding: 14px 32px;
+      font-size: 18px;
+      font-weight: 700;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .back-btn:hover {
+      transform: translateY(-4px);
+    }
+
+    /* Mobile responsive */
+    @media (max-width: 800px) {
+      .options {
+        grid-template-columns: 1fr;
+      }
+      .card {
+        min-height: 160px;
+      }
+      .title {
+        font-size: 34px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="title">🎼Music Assistance🎼</div>
+    <div class="subtitle">Choose how you want music to shape your moment</div>
+
+    <div class="options">
+
+      <div class="card" onclick="location.href='therapy.html'">
+        <div class="card-title">Therapy Through Music😇</div>
+        <div class="card-desc">Heal through curated musical transitions</div>
+      </div>
+
+      <div class="card" onclick="location.href='nostalgia.html'">
+        <div class="card-title">Nostalgia Dive🥹</div>
+        <div class="card-desc">Unlock memories through soundtrack</div>
+      </div>
+
+      <div class="card" onclick="location.href='vibe.html'">
+        <div class="card-title">Vibe Moment🕺💃</div>
+        <div class="card-desc">Songs shaped by your mood + weather</div>
+      </div>
+
+      <div class="card" onclick="location.href='BYDJ.html'">
+        <div class="card-title">Be Your DJ🎧</div>
+        <div class="card-desc">Have the steering wheel for managing your mood </div>
+      </div>
+
+    </div>
+
+    <button class="back-btn" onclick="history.back()">← Back</button>
+  </div>
+<script>
+  const params = new URLSearchParams(location.search);
+  const mood = params.get("mood");
+  const score = params.get("score");
+
+  function forward(base){
+    if(!mood) return base;
+    const p = new URLSearchParams();
+    p.set("mood", mood);
+    if(score) p.set("score", score);
+    return `${base}?${p.toString()}`;
+  }
+
+  document.querySelectorAll(".card")[0].onclick = () => {
+    location.href = forward("therapy.html");
+  };
+</script>
+</body>
+</html>

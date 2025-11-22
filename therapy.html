@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Therapy Through Music — Sylvia Ai</title>
+<link rel="icon" type="image/png" href="icon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#0c0c0d;
+      --neon:#00ffa0;
+      --muted: rgba(255,255,255,0.12);
+      --panel-bg: rgba(255,255,255,0.02);
+      --accent:#00e07a;
+      --text:#e9f6f0;
+    }
+
+    html,body{
+      margin:0;
+      background:var(--bg);
+      font-family:'Poppins',sans-serif;
+      color:var(--text)
+    }
+
+    .wrap{
+      max-width:1100px;
+      margin:36px auto;
+      padding:28px
+    }
+
+    .title{
+      font-size:40px;
+      font-weight:800;
+      color:var(--neon)
+    }
+
+    .subtitle{
+      color:rgba(255,255,255,0.6);
+      margin-bottom:16px
+    }
+
+    .mood-box{
+      display:flex;
+      gap:18px;
+      background:var(--panel-bg);
+      padding:20px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.06)
+    }
+
+    .mood-icon{font-size:48px}
+    .mood-title{font-size:22px;font-weight:700}
+    .mood-score{font-size:14px;color:rgba(255,255,255,0.6)}
+
+    .controls-row{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      margin-top:20px
+    }
+
+    select,button{
+      padding:10px 16px;
+      border-radius:8px;
+      font-weight:600;
+      cursor:pointer
+    }
+
+    #gen{
+      background:var(--neon);
+      color:#04120a;
+      border:0
+    }
+
+    #restart{
+      background:transparent;
+      border:1px solid rgba(255,255,255,0.2);
+      color:white
+    }
+
+    .stages{
+      margin-top:28px;
+      display:flex;
+      flex-direction:column;
+      gap:20px
+    }
+
+    .stage{
+      padding:18px;
+      background:var(--panel-bg);
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.06)
+    }
+
+    .stage-title{
+      font-size:20px;
+      font-weight:700;
+      color:var(--neon)
+    }
+
+    .songs-list{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin-top:12px
+    }
+
+    .song{
+      padding:12px;
+      background:rgba(0,0,0,0.3);
+      border-radius:10px;
+      display:flex;
+      justify-content:space-between
+    }
+
+    .song .title{font-weight:700}
+    .song .artist{font-size:13px;color:rgba(255,255,255,0.6)}
+    a{color:var(--accent);font-weight:600;text-decoration:none}
+
+    .locked{
+      opacity:0.4;
+      pointer-events:none
+    }
+
+    #status{
+      margin-left:10px;
+      font-size:14px
+    }
+
+    /* COMPLETION OVERLAY */
+    .completion-overlay{
+      position:fixed;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:rgba(4,6,4,0.6);
+      backdrop-filter: blur(6px) saturate(1.05);
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .28s ease;
+      z-index:1200;
+    }
+
+    .completion-overlay.show{
+      opacity:1;
+      pointer-events:auto;
+    }
+
+    .completion-card{
+      width:clamp(320px, 46vw, 720px);
+      background:linear-gradient(180deg,
+        rgba(255,255,255,0.02),
+        rgba(255,255,255,0.01)
+      );
+      border-radius:14px;
+      padding:28px;
+      text-align:center;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+      transform:translateY(18px);
+      opacity:0;
+      transition:transform .36s cubic-bezier(.18,.9,.32,1),
+                 opacity .28s ease;
+    }
+
+    .completion-overlay.show .completion-card{
+      transform:translateY(0);
+      opacity:1;
+    }
+
+    .completion-graphic{
+      font-size:48px;
+      width:88px;
+      height:88px;
+      margin:0 auto 12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:14px;
+      background:rgba(0,255,150,0.08);
+      color:var(--neon);
+      box-shadow: 0 8px 30px rgba(0,255,150,0.06) inset;
+    }
+
+    #completionTitle{
+      margin:6px 0;
+      font-size:20px;
+      font-weight:800;
+      color:var(--neon)
+    }
+
+    .completion-msg{
+      color:rgba(255,255,255,0.75);
+      margin:6px 0 18px;
+      line-height:1.45
+    }
+
+    .completion-ctas{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      margin-top:6px
+    }
+
+    .btn{
+      padding:10px 16px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,0.06);
+      cursor:pointer;
+      font-weight:700
+    }
+
+    .btn.primary{background:var(--neon);color:#04120a;border:0}
+    .btn.subtle{background:transparent;color:#fff}
+
+    .auto-redirect-note{
+      margin-top:12px;
+      font-size:13px;
+      color:rgba(255,255,255,0.55)
+    }
+
+  </style>
+
+</head>
+<body>
+
+  <div class="wrap">
+    <div class="title">Therapy Through Music</div>
+    <div class="subtitle">A 3-step guided session — listen, reflect, move forward.</div>
+
+    <!-- MOOD BOX -->
+    <div class="mood-box">
+      <div id="moodIcon" class="mood-icon">🎧</div>
+      <div>
+        <div class="mood-title" id="moodTitle">Unknown</div>
+        <div class="mood-score" id="moodScore">Confidence: —</div>
+      </div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="controls-row">
+      <select id="lang">
+        <option value="english">English</option>
+        <option value="hindi">Hindi</option>
+        <option value="punjabi">Punjabi</option>
+      </select>
+
+      <button id="gen">Generate Therapy</button>
+      <button id="restart">Restart</button>
+
+      <div id="status"></div>
+    </div>
+
+    <!-- STAGES -->
+    <div class="stages">
+
+      <div id="stage1Box" class="stage">
+        <div class="stage-title">Stage 1 • Warm Up</div>
+        <div class="songs-list" id="stage1List"></div>
+        <button id="complete1">Complete Stage 1</button>
+      </div>
+
+      <div id="stage2Box" class="stage locked">
+        <div class="stage-title">Stage 2 • Lift</div>
+        <div class="songs-list" id="stage2List"></div>
+        <button id="complete2">Complete Stage 2</button>
+      </div>
+
+      <div id="stage3Box" class="stage locked">
+        <div class="stage-title">Stage 3 • Breakthrough</div>
+        <div class="songs-list" id="stage3List"></div>
+        <button id="finish">Finish Session</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- COMPLETION OVERLAY -->
+  <div id="completionOverlay" aria-hidden="true" class="completion-overlay">
+    <div class="completion-card">
+      <div class="completion-graphic">✅</div>
+      <h2 id="completionTitle">Session complete</h2>
+      <p class="completion-msg">You made space for yourself today. Take this calm forward into whatever comes next.</p>
+
+      <div class="completion-ctas">
+        <button id="completion-home" class="btn subtle">Return Home</button>
+        <button id="completion-repeat" class="btn primary">Start another session</button>
+      </div>
+
+      <div class="auto-redirect-note">
+        Returning to home in <span id="countdown">8</span>s…
+      </div>
+    </div>
+  </div>
+
+
+<script>
+  // URL PARAMS
+  const params = new URLSearchParams(window.location.search);
+  const moodParam = (params.get("mood") || "").toLowerCase();
+  const scoreParam = params.get("score");
+
+  const moodIcon = document.getElementById("moodIcon");
+  const moodTitle = document.getElementById("moodTitle");
+  const moodScore = document.getElementById("moodScore");
+
+  const MOOD_MAP = {
+    happy:{emoji:"😄", label:"Happy"},
+    sad:{emoji:"😢", label:"Sad"},
+    angry:{emoji:"😠", label:"Angry"},
+    surprised:{emoji:"😲", label:"Surprised"},
+    disgusted:{emoji:"🤢", label:"Disgusted"},
+    fearful:{emoji:"😨", label:"Fearful"},
+    neutral:{emoji:"😐", label:"Neutral"}
+  };
+
+  const statusDiv = document.getElementById("status");
+  function setStatus(msg, err=false){
+    statusDiv.style.color = err ? "red" : "#00ffa0";
+    statusDiv.textContent = msg;
+  }
+
+  if (!moodParam) {
+    setStatus("Please detect your mood first.", true);
+  } else {
+    const meta = MOOD_MAP[moodParam];
+    moodIcon.textContent = meta?.emoji || "🎧";
+    moodTitle.textContent = meta?.label || "Unknown";
+    moodScore.textContent = scoreParam ? `Confidence: ${scoreParam}%` : "Confidence: —";
+  }
+
+  // ELEMENTS
+  const genBtn = document.getElementById("gen");
+  const restartBtn = document.getElementById("restart");
+  const stage1List = document.getElementById("stage1List");
+  const stage2List = document.getElementById("stage2List");
+  const stage3List = document.getElementById("stage3List");
+  const stage1Box = document.getElementById("stage1Box");
+  const stage2Box = document.getElementById("stage2Box");
+  const stage3Box = document.getElementById("stage3Box");
+
+  // SONG ELEMENT
+  function createSongEl(track){
+    const div = document.createElement("div");
+    div.className = "song";
+    div.innerHTML = `
+      <div>
+        <div class="title">${track.title}</div>
+        <div class="artist">${track.artist}</div>
+      </div>
+      <a href="${track.url}" target="_blank">Open in Spotify →</a>
+    `;
+    return div;
+  }
+
+  // FETCH THERAPY
+  genBtn.addEventListener("click", async () => {
+    if (!moodParam) return setStatus("Please detect your mood first.", true);
+
+    setStatus("Loading…");
+    stage1List.innerHTML = stage2List.innerHTML = stage3List.innerHTML = "";
+
+    try {
+      const res = await fetch("/spotify/therapy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mood: moodParam,
+          language: document.getElementById("lang").value
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) return setStatus(data.error, true);
+
+      data.stage1.forEach(t => stage1List.appendChild(createSongEl(t)));
+      data.stage2.forEach(t => stage2List.appendChild(createSongEl(t)));
+      data.stage3.forEach(t => stage3List.appendChild(createSongEl(t)));
+
+      setStatus("Therapy generated. Start with Stage 1.");
+    } catch (e) {
+      setStatus("Network error", true);
+    }
+  });
+
+  // STAGE FLOW
+  document.getElementById("complete1").onclick = () => {
+    stage2Box.classList.remove("locked");
+    setStatus("Stage 1 complete. Stage 2 unlocked.");
+  };
+
+  document.getElementById("complete2").onclick = () => {
+    stage3Box.classList.remove("locked");
+    setStatus("Stage 2 complete. Stage 3 unlocked.");
+  };
+
+  // COMPLETION OVERLAY LOGIC
+  const completionOverlay = document.getElementById('completionOverlay');
+  const completionHome = document.getElementById('completion-home');
+  const completionRepeat = document.getElementById('completion-repeat');
+  const countdownEl = document.getElementById('countdown');
+
+  let countdownTimer = null;
+
+  function showCompletion(autoSeconds = 8){
+    completionOverlay.classList.add('show');
+    completionOverlay.setAttribute('aria-hidden','false');
+
+    let sec = autoSeconds;
+    countdownEl.textContent = sec;
+
+    clearInterval(countdownTimer);
+    countdownTimer = setInterval(() => {
+      sec -= 1;
+      countdownEl.textContent = sec;
+      if (sec <= 0) {
+        clearInterval(countdownTimer);
+        window.location.href = 'index.html';
+      }
+    }, 1000);
+  }
+
+  completionHome.onclick = () => window.location.href = 'index.html';
+  completionRepeat.onclick = () => window.location.href = 'index.html';
+
+  document.getElementById('finish').onclick = () => {
+    showCompletion(8);
+  };
+
+  // RESTART BUTTON FIX
+  restartBtn.onclick = () => {
+    stage1List.innerHTML = "";
+    stage2List.innerHTML = "";
+    stage3List.innerHTML = "";
+    
+    stage2Box.classList.add("locked");
+    stage3Box.classList.add("locked");
+
+    setStatus("Reset. Generate again.");
+  };
+
+</script>
+</body>
+</html>
+
+
+
+

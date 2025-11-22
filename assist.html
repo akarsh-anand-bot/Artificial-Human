@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Select Assistance — Artificial Human</title>
+ <link rel="icon" type="image/png" href="icon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#0d0d0d;
+      --neon:#0aff9d;
+      --glass: rgba(255,255,255,0.03);
+      --muted: rgba(255,255,255,0.12);
+      --card-radius: 14px;
+    }
+    html,body{height:100%;margin:0;background:var(--bg);font-family:'Poppins',sans-serif;color:#fff}
+    body{opacity:1; transition: opacity .5s ease-in-out;}
+
+    .wrap{max-width:1100px;margin:48px auto;padding:32px;display:flex;flex-direction:column;align-items:center;gap:28px}
+
+    .title {
+      font-weight:800;
+      font-size:44px;
+      color:var(--neon);
+      letter-spacing:1px;
+      text-shadow:0 0 18px rgba(10,255,150,0.12);
+      margin-top:12px;
+    }
+    .subtitle { color: rgba(255,255,255,0.65); margin-bottom:6px; }
+
+    /* mood box */
+    .mood-box {
+      width:100%;
+      max-width:880px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius: var(--card-radius);
+      padding:22px;
+      display:flex;
+      gap:20px;
+      align-items:center;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.7), 0 0 30px rgba(10,255,150,0.03) inset;
+      border:1px solid rgba(255,255,255,0.04);
+      position:relative;
+      overflow:hidden;
+      transform:translateY(8px);
+      animation: popIn .45s ease both;
+    }
+
+    @keyframes popIn {
+      from { opacity:0; transform:translateY(18px) scale(.98); }
+      to   { opacity:1; transform:translateY(0) scale(1); }
+    }
+
+    .mood-icon {
+      width:110px;
+      height:110px;
+      border-radius:16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:44px;
+      background:rgba(255,255,255,0.02);
+      border:1px solid rgba(255,255,255,0.03);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+    }
+
+    .mood-copy {
+      flex:1;
+      text-align:left;
+    }
+
+    .mood-copy h3 {
+      margin:0 0 6px 0;
+      font-size:20px;
+      letter-spacing:0.6px;
+      color:rgba(255,255,255,0.95);
+    }
+
+    .mood-copy .mood-title {
+      font-weight:800;
+      font-size:28px;
+      margin:4px 0;
+    }
+
+    .mood-copy .mood-score {
+      margin-top:8px;
+      color:rgba(255,255,255,0.65);
+      font-size:15px;
+    }
+
+    .glow-ring {
+      position:absolute;
+      right:-120px;
+      top:-60px;
+      width:260px;height:260px;border-radius:50%;
+      filter:blur(32px);opacity:.28;pointer-events:none;
+      transform:rotate(14deg);
+    }
+
+    /* options cards */
+    .options {
+      width:100%;
+      max-width:900px;
+      display:flex;
+      gap:28px;
+      justify-content:center;
+      margin-top:6px;
+      flex-wrap:wrap;
+    }
+
+    .card {
+      min-width:260px;
+      height:140px;
+      border-radius:12px;
+      background:var(--glass);
+      border:1px solid rgba(255,255,255,0.03);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:700;
+      letter-spacing:1px;
+      cursor:pointer;
+      transition: transform .18s ease, box-shadow .18s ease;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    }
+    .card:hover{ transform:translateY(-6px); box-shadow:0 28px 70px rgba(0,0,0,0.75); }
+
+    .back-btn {
+      margin-top:18px;
+      background:var(--neon);
+      color:#04120a;
+      border:none;padding:12px 22px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="title">Hello, I am Sylvia AI</div>
+    <div class="subtitle">How may I assist you today?</div>
+
+    <!-- Mood box -->
+    <div id="moodBox" class="mood-box">
+      <div id="moodIcon" class="mood-icon">🙂</div>
+      <div class="mood-copy">
+        <h3>What's the mood today</h3>
+        <div id="moodTitle" class="mood-title">Loading…</div>
+        <div id="moodScore" class="mood-score">Confidence: —</div>
+      </div>
+      <div id="glow" class="glow-ring"></div>
+    </div>
+
+    <!-- Options -->
+    <div class="options">
+      <div class="card">Song ASSISTANCE🎵</div>
+      <div class="card">Personal ASSISTANCE🫂</div>
+    </div>
+
+    <button class="back-btn" onclick="history.back()">← Back</button>
+  </div>
+
+  <script>
+    /* ---- Mood → UI mapping ---- */
+    const MOOD_MAP = {
+      happy:     {emoji: "😄", color: "#FFD24A", label: "Happy"},
+      sad:       {emoji: "😢", color: "#5AA7FF", label: "Sad"},
+      angry:     {emoji: "😠", color: "#FF6B6B", label: "Angry"},
+      surprised: {emoji: "😲", color: "#FFD6A5", label: "Surprised"},
+      disgusted: {emoji: "🤢", color: "#9AE66E", label: "Disgusted"},
+      fearful:   {emoji: "😨", color: "#BBA4FF", label: "Fearful"},
+      neutral:   {emoji: "😐", color: "#BDBDBD", label: "Neutral"}
+    };
+
+    const params = new URLSearchParams(location.search);
+    const moodParam = (params.get("mood") || "").toLowerCase();
+    const scoreParam = params.get("score") ? parseInt(params.get("score")) : null;
+
+    const moodIcon = document.getElementById("moodIcon");
+    const moodTitle = document.getElementById("moodTitle");
+    const moodScore = document.getElementById("moodScore");
+    const glow = document.getElementById("glow");
+
+    function hexToRgba(hex, alpha){
+      const r=parseInt(hex.slice(1,3),16);
+      const g=parseInt(hex.slice(3,5),16);
+      const b=parseInt(hex.slice(5,7),16);
+      return `rgba(${r},${g},${b},${alpha})`;
+    }
+
+    function applyMood(){
+      const meta = MOOD_MAP[moodParam] || {emoji:"🤖",color:"#0aff9d",label:"Unknown"};
+
+      moodIcon.textContent = meta.emoji;
+      moodTitle.textContent = meta.label;
+      moodScore.textContent = scoreParam ? `Confidence: ${scoreParam}%` : "Confidence: —";
+
+      glow.style.background =
+        `radial-gradient(circle at 30% 30%, ${hexToRgba(meta.color,0.28)} 0%, ${hexToRgba(meta.color,0.06)} 30%, transparent 60%)`;
+
+      glow.style.boxShadow = `0 0 80px ${hexToRgba(meta.color,0.16)}`;
+
+      moodIcon.style.color = meta.color;
+    }
+
+    applyMood();
+  </script>
+
+  <!-- ERROR-FREE PARAM PASSING SCRIPT -->
+  <script>
+    const _mood = moodParam;
+    const _score = scoreParam;
+
+    const cards = document.querySelectorAll(".card");
+    const songCard = cards[0];
+    const mentalCard = cards[1];
+
+    function buildUrl(base){
+      if(!_mood) return base;
+      const p = new URLSearchParams();
+      p.set("mood", _mood);
+      if(_score) p.set("score", _score);
+      return `${base}?${p.toString()}`;
+    }
+
+    songCard.onclick = () => {
+      location.href = buildUrl("song.html");
+    };
+
+    mentalCard.onclick = () => {
+      location.href = buildUrl("mental.html");
+    };
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Build-a-Track — BYDJ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+ <link rel="icon" type="image/png" href="icon.png">
+ <style>
+    :root{
+      --bg: linear-gradient(180deg,#03050a,#071018);
+      --card: rgba(255,255,255,0.02);
+      --glass: rgba(255,255,255,0.03);
+      --neon: #00ffd4;
+      --neon-2: #7c5cff;
+      --accent: #8ad7ff;
+      --muted: rgba(255,255,255,0.6);
+      --pill-off: rgba(255,255,255,0.03);
+      --radius: 12px;
+      --text: #eafdf7;
+    }
+    html,body{height:100%;margin:0;background:var(--bg);font-family:'Poppins',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
+    .wrap{max-width:1100px;margin:30px auto;padding:18px;display:flex;flex-direction:column;gap:18px}
+    .header{display:flex;justify-content:space-between;align-items:center}
+    .title{font-weight:800;color:var(--neon);font-size:22px}
+    .subtitle{color:var(--muted);font-size:13px}
+
+    /* main panel */
+    .panel{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.015));
+           border:1px solid var(--glass);border-radius:16px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,0.6)}
+    .grid{display:grid;grid-template-columns:1fr 380px;gap:18px}
+    @media(max-width:1000px){ .grid{grid-template-columns:1fr} }
+
+    /* left: ingredient area */
+    .left{display:flex;flex-direction:column;gap:14px}
+    .section-title{font-weight:700;margin-bottom:6px}
+    .pill-row{display:flex;flex-wrap:wrap;gap:10px}
+    .pill{
+      padding:10px 14px;border-radius:999px;background:var(--pill-off);border:1px solid rgba(255,255,255,0.02);
+      cursor:pointer;transition:transform .12s ease, box-shadow .12s ease, background .12s;
+      user-select:none;font-weight:700;font-size:13px;
+    }
+    .pill:hover{transform:translateY(-4px)}
+    .pill.selected{background:linear-gradient(90deg,var(--neon),var(--neon-2));color:#071018;box-shadow:0 18px 50px rgba(0,255,212,0.04)}
+
+    .controls{display:flex;gap:12px;align-items:center}
+    .select, .input{
+      background:transparent;border:1px solid rgba(255,255,255,0.05);padding:10px;border-radius:10px;color:var(--text)
+    }
+
+    .big-btn{
+      padding:12px 18px;border-radius:999px;border:0;background:linear-gradient(90deg,var(--neon),var(--neon-2));
+      color:#071018;font-weight:800;cursor:pointer;font-size:15px;box-shadow:0 24px 60px rgba(0,255,212,0.06)
+    }
+
+    /* right: playlist UI */
+    .right{display:flex;flex-direction:column;gap:12px}
+    .meta{display:flex;justify-content:space-between;align-items:center}
+    .mix-title{font-weight:800;color:var(--neon-2)}
+    .mix-note{color:var(--muted);font-size:13px}
+    .tracks{display:flex;flex-direction:column;gap:8px;max-height:420px;overflow:auto;padding-right:6px;margin-top:6px}
+    .track{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:rgba(255,255,255,0.02)}
+    .track .meta{display:flex;flex-direction:column}
+    .track .title{font-weight:700}
+    .track .artist{font-size:13px;color:rgba(255,255,255,0.7)}
+    .muted{color:var(--muted);font-size:13px}
+
+    /* small helpers */
+    .hint{font-size:13px;color:var(--muted)}
+    .row{display:flex;gap:10px;align-items:center}
+    .clear{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 10px;border-radius:10px;color:var(--text);cursor:pointer}
+
+    /* subtle animations */
+    .pulse { animation: pulseGlow 1.2s ease infinite; }
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 0 rgba(0,0,0,0); }
+      50% { box-shadow: 0 0 18px rgba(0,255,212,0.05); }
+      100% { box-shadow: 0 0 0 rgba(0,0,0,0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div>
+        <div class="title">Build-A-Track</div>
+        <div class="subtitle">Pick ingredients — beat, vocals, mood, era, texture — and Sylvia builds a unique playlist.</div>
+      </div>
+      <div>
+        <button onclick="history.back()" class="clear">← Back</button>
+      </div>
+    </div>
+
+    <div class="panel grid">
+      <!-- LEFT: ingredients -->
+      <div class="left">
+        <!-- Mood carried from URL -->
+        <div id="moodBox" style="display:flex;gap:12px;align-items:center">
+          <div id="moodIcon" style="font-size:22px">🎧</div>
+          <div>
+            <div id="moodLabel" class="muted">Mood:</div>
+            <div id="moodScore" class="hint">Confidence: —</div>
+          </div>
+        </div>
+
+        <!-- Beat -->
+        <div>
+          <div class="section-title">Beat</div>
+          <div class="pill-row" id="beatRow">
+            <div class="pill" data-category="beat" data-value="soft">Soft</div>
+            <div class="pill" data-category="beat" data-value="groovy">Groovy</div>
+            <div class="pill" data-category="beat" data-value="heavy">Heavy</div>
+            <div class="pill" data-category="beat" data-value="fast">Fast</div>
+          </div>
+        </div>
+
+        <!-- Vocals -->
+        <div>
+          <div class="section-title">Vocals</div>
+          <div class="pill-row" id="vocalsRow">
+            <div class="pill" data-category="vocals" data-value="male">Male</div>
+            <div class="pill" data-category="vocals" data-value="female">Female</div>
+            <div class="pill" data-category="vocals" data-value="duet">Duet</div>
+            <div class="pill" data-category="vocals" data-value="minimal">Minimal</div>
+          </div>
+        </div>
+
+        <!-- Mood -->
+        <div>
+          <div class="section-title">Mood</div>
+          <div class="pill-row" id="moodRow">
+            <div class="pill" data-category="scene" data-value="sunny">Sunny</div>
+            <div class="pill" data-category="scene" data-value="heartbreak">Heartbreak</div>
+            <div class="pill" data-category="scene" data-value="nightlife">Nightlife</div>
+            <div class="pill" data-category="scene" data-value="focus">Focus</div>
+            <div class="pill" data-category="scene" data-value="energetic">Energetic</div>
+            <div class="pill" data-category="scene" data-value="dark">Dark</div>
+          </div>
+        </div>
+
+        <!-- Era -->
+        <div>
+          <div class="section-title">Era</div>
+          <div class="pill-row" id="eraRow">
+            <div class="pill" data-category="era" data-value="2000s">2000s</div>
+            <div class="pill" data-category="era" data-value="2010s">2010s</div>
+            <div class="pill" data-category="era" data-value="2020s">2020s</div>
+            <div class="pill" data-category="era" data-value="timeless">Timeless</div>
+          </div>
+        </div>
+
+        <!-- Texture -->
+        <div>
+          <div class="section-title">Texture</div>
+          <div class="pill-row" id="textureRow">
+            <div class="pill" data-category="texture" data-value="lofi">Lo-fi</div>
+            <div class="pill" data-category="texture" data-value="acoustic">Acoustic</div>
+            <div class="pill" data-category="texture" data-value="electronic">Electronic</div>
+            <div class="pill" data-category="texture" data-value="retro-synth">Retro-synth</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:center;margin-top:6px">
+          <button id="generate" class="big-btn">Craft Playlist</button>
+          <button id="clearSelections" class="clear">Clear</button>
+          <div id="status" class="muted"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: results -->
+      <div class="right">
+        <div class="meta">
+          <div>
+            <div class="mix-title">Your Mix</div>
+            <div id="mixTag" class="muted">No mix yet</div>
+          </div>
+          <div>
+            <button id="openTop" class="clear">Open top</button>
+          </div>
+        </div>
+
+        <div id="snapshot" class="muted">Make a selection and press <strong>Craft Playlist</strong>.</div>
+
+        <div id="tracks" class="tracks" aria-live="polite"></div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="hint">No repeating song titles — curated and unique.</div>
+          <div style="display:flex;gap:8px">
+            <button id="regenerate" class="clear">Regenerate</button>
+            <button id="download" class="clear">Export</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // --- carried mood ---
+  const params = new URLSearchParams(window.location.search);
+  const carriedMood = (params.get('mood') || '').toLowerCase();
+  const carriedScore = params.get('score') || '';
+
+  const moodLabel = document.getElementById('moodLabel');
+  const moodScore = document.getElementById('moodScore');
+  const moodIcon = document.getElementById('moodIcon');
+
+  if (carriedMood) {
+    moodLabel.textContent = `Mood: ${carriedMood}`;
+    moodScore.textContent = carriedScore ? `Confidence: ${carriedScore}%` : 'Confidence: —';
+    // simple emoji mapping
+    const EMO = { happy:'😄', sad:'😢', angry:'😠', neutral:'😐', surprised:'😲' };
+    moodIcon.textContent = EMO[carriedMood] || '🎧';
+  } else {
+    document.getElementById('moodBox').style.display = 'none';
+  }
+
+  // --- pill selection logic (single select per category) ---
+  const pills = Array.from(document.querySelectorAll('.pill'));
+  const state = {}; // e.g. { beat:'groovy', vocals:'female', ... }
+
+  pills.forEach(p => {
+    p.addEventListener('click', () => {
+      const cat = p.dataset.category;
+      const val = p.dataset.value;
+      // toggle: if already selected, deselect
+      if (p.classList.contains('selected')) {
+        p.classList.remove('selected');
+        delete state[cat];
+      } else {
+        // ensure only one selected in same category
+        document.querySelectorAll(`.pill[data-category="${cat}"]`).forEach(x => x.classList.remove('selected'));
+        p.classList.add('selected');
+        state[cat] = val;
+      }
+      document.getElementById('status').textContent = '';
+    });
+    // keyboard
+    p.tabIndex = 0;
+    p.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); p.click(); }});
+  });
+
+  // UI refs
+  const generateBtn = document.getElementById('generate');
+  const status = document.getElementById('status');
+  const tracksEl = document.getElementById('tracks');
+  const snapshot = document.getElementById('snapshot');
+  const mixTag = document.getElementById('mixTag');
+  const openTop = document.getElementById('openTop');
+  const regenerateBtn = document.getElementById('regenerate');
+  const downloadBtn = document.getElementById('download');
+  let lastTracks = [];
+
+  function setStatus(t, err=false){ status.textContent = t; status.style.color = err ? 'salmon' : '#9fffe8'; }
+
+  // build query string from state
+  function buildPrompt() {
+    const parts = [];
+    if (state.beat) parts.push(state.beat);
+    if (state.vocals) parts.push(state.vocals + ' vocal');
+    if (state.scene) parts.push(state.scene);
+    if (state.era) parts.push(state.era);
+    if (state.texture) parts.push(state.texture);
+    if (carriedMood) parts.push(carriedMood);
+    // fallback
+    if (!parts.length) parts.push('nostalgic mellow mix');
+    return parts.join(' ');
+  }
+
+  async function craftPlaylist() {
+    setStatus('');
+    tracksEl.innerHTML = '';
+    snapshot.textContent = 'Finding tracks…';
+    generateBtn.disabled = true;
+
+    const prompt = buildPrompt();
+    const payload = { prompt, mood: carriedMood || '' };
+
+    try {
+      const res = await fetch('/spotify/bydj', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(()=>({error:'server error'}));
+        setStatus(err.error || 'Server error', true);
+        snapshot.textContent = 'Failed to fetch.';
+        generateBtn.disabled = false;
+        return;
+      }
+
+      const data = await res.json();
+      const list = (data.tracks || []).slice(0,12);
+      lastTracks = list;
+      renderTracks(list);
+      snapshot.innerHTML = data.meta?.snapshot || `Prompt: ${prompt}`;
+      mixTag.textContent = data.meta?.label || 'Custom mix';
+      setStatus('Done');
+    } catch (e) {
+      console.error(e);
+      setStatus('Network error', true);
+      snapshot.textContent = 'Network error';
+    } finally {
+      generateBtn.disabled = false;
+    }
+  }
+
+  function renderTracks(list) {
+    tracksEl.innerHTML = '';
+    if (!list.length) {
+      tracksEl.innerHTML = '<div class="muted">No tracks found — tweak ingredients and try again.</div>';
+      return;
+    }
+    list.forEach(t => {
+      const el = document.createElement('div');
+      el.className = 'track';
+      el.innerHTML = `
+        <div class="meta">
+          <div class="title">${escapeHtml(t.title)}</div>
+          <div class="artist">${escapeHtml(t.artist)}</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <a href="${t.url}" target="_blank" style="color:var(--accent);font-weight:700">Open</a>
+        </div>
+      `;
+      tracksEl.appendChild(el);
+    });
+  }
+
+  // helpers
+  function escapeHtml(s){ if(!s) return ''; return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+  // open top
+  openTop.addEventListener('click', () => {
+    if (lastTracks.length) window.open(lastTracks[0].url, '_blank');
+  });
+
+  // regenerate uses last prompt (simple)
+  regenerateBtn.addEventListener('click', () => {
+    craftPlaylist();
+  });
+
+  // download CSV of tracks (simple export)
+  downloadBtn.addEventListener('click', () => {
+    if (!lastTracks.length) return setStatus('No tracks to export', true);
+    const csv = ['title,artist,url', ...lastTracks.map(t => `"${t.title.replace(/"/g,'""')}","${t.artist.replace(/"/g,'""')}",${t.url}`)].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'mix.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById('clearSelections').addEventListener('click', () => {
+    Object.keys(state).forEach(k => delete state[k]);
+    pills.forEach(p => p.classList.remove('selected'));
+    tracksEl.innerHTML = '';
+    snapshot.textContent = 'Cleared selections.';
+    mixTag.textContent = 'No mix yet';
+  });
+
+  generateBtn.addEventListener('click', craftPlaylist);
+
+  // small UX: Enter triggers generate
+  window.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); craftPlaylist(); }});
+
+</script>
+</body>
+</html>

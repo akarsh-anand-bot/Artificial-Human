@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Artificial Human</title>
+ <link rel="icon" type="image/png" href="icon.png">
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+<!-- face-api.js -->
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+<style>
+  :root{
+    --bg:#0d0d0d;
+    --neon:#0aff9d;
+    --muted: rgba(255,255,255,0.12);
+    --glass: rgba(255,255,255,0.02);
+  }
+  html,body{height:100%;margin:0;background:var(--bg);font-family:'Poppins',sans-serif;color:#fff}
+  .container{max-width:1300px;margin:0 auto;padding:36px 20px 80px 20px}
+
+  /* HERO */
+  .hero{padding:36px 0 8px 0;text-align:center}
+  .title{font-weight:800;font-size:64px;letter-spacing:2px;margin:6px 0}
+  .subtitle{color:rgba(255,255,255,0.75);margin-bottom:20px}
+  .btn{background:var(--neon);color:#04120a;border:0;padding:14px 36px;border-radius:12px;font-weight:600;font-size:18px;cursor:pointer;box-shadow:0 8px 30px rgba(0,255,170,0.06);transition:transform .18s}
+  .btn:hover{transform:translateY(-3px)}
+
+  /* SLIDER */
+  .slider {
+    margin:46px auto 24px;
+    width:80%;
+    height:420px;
+    border-radius:16px;
+    overflow:hidden;
+    position:relative;
+    box-shadow:0 30px 80px rgba(0,0,0,0.7), inset 0 2px 12px rgba(255,255,255,0.02);
+    background:linear-gradient(180deg,#080808, #0f0f0f);
+  }
+  .slides{position:relative;width:100%;height:100%}
+  .slide{
+    position:absolute;inset:0;opacity:0;transition:opacity .6s ease;
+    display:flex;align-items:center;justify-content:center;
+    background:#0b0b0b;
+  }
+  .slide.show{opacity:1;z-index:2}
+  .slide img{
+    width:100%;height:100%;object-fit:cover;
+    display:block; filter:contrast(.95) saturate(.95);
+    transform:scale(1.02);
+    transition:transform .9s ease;
+  }
+  .slide.show img{transform:scale(1);}
+
+
+  /* controls */
+  .controls{
+    position:absolute;left:0;right:0;bottom:18px;display:flex;align-items:center;justify-content:center;gap:14px;
+  }
+  .arrow{width:48px;height:48px;border-radius:8px;background:rgba(255,255,255,.03);display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid rgba(255,255,255,0.04)}
+  .arrow svg{width:18px;height:18px;fill:rgba(255,255,255,0.9)}
+  .dots{display:flex;gap:10px;align-items:center}
+  .dot{width:10px;height:10px;border-radius:20px;background:rgba(255,255,255,0.12);cursor:pointer}
+  .dot.active{background:var(--neon);box-shadow:0 6px 18px rgba(10,255,150,0.12)}
+
+  /* CAMERA CARD */
+  .card {
+    margin-top:34px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:28px;
+    flex-direction:column;
+  }
+  .cam-wrap{
+    position:relative;width:560px;height:420px;border-radius:14px;background:var(--glass);box-shadow:0 30px 60px rgba(0,0,0,0.7);
+    display:flex;align-items:center;justify-content:center;overflow:visible;
+  }
+
+  video#video{
+    width:88%;height:78%;border-radius:12px;border:3px solid rgba(0,0,0,.3);object-fit:cover;
+    box-shadow: 0 15px 45px rgba(0,0,0,0.7), 0 0 30px rgba(0,0,0,0.4)
+  }
+
+  /* Jarvis scanning UI */
+  .scan-ring{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;
+    width:90%;height:82%;border-radius:16px;
+  }
+  .ring-inner, .ring-outer{
+    position:absolute;inset:0;border-radius:inherit;box-shadow:0 0 0 1px rgba(10,255,150,0.06) inset;
+  }
+  .ring-outer::after{
+    content:"";position:absolute;inset:-6%;border-radius:inherit;
+    border:2px dashed rgba(10,255,150,0.06); transform:rotate(0deg);
+    animation:spinSlow 6s linear infinite;
+  }
+  @keyframes spinSlow{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+  /* scanning sweep */
+  .sweep{
+    position:absolute;left:-30%;top:0;height:100%;width:40%;background:linear-gradient(90deg, rgba(10,255,150,0) 0%, rgba(10,255,150,0.06) 50%, rgba(10,255,150,0) 100%);
+    transform:skewX(-12deg);
+    animation:sweep 2.2s linear infinite;
+    mix-blend-mode:screen;
+    border-radius:2px;
+  }
+  @keyframes sweep{0%{left:-40%}100%{left:120%}}
+
+  /* mood text + accept */
+  .mood-bar{margin-top:16px;text-align:center}
+  .mood-text{font-size:20px;color:#d6fbe6;opacity:0.95;padding:8px 14px;border-radius:10px}
+  .mood-actions{margin-top:12px;display:flex;gap:12px}
+  .accept,.retry{padding:10px 18px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+  .accept{background:var(--neon);color:#04120a}
+  .retry{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#fff}
+
+  @media (max-width:720px){
+    .title{font-size:36px}
+    .cam-wrap{width:92%;height:300px}
+    .slider{height:260px}
+  }
+   /* Add the brand logo styles BELOW */
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .brand-logo {
+      height: 64px;
+      width: auto;
+      filter: drop-shadow(0 0 12px rgba(10,255,150,0.18));
+    }
+</style>
+</head>
+<body>
+  <div class="hero">
+  <div class="brand">
+    <img src="icon.png" class="brand-logo" alt="Logo">
+    <div class="title">ARTIFICIAL HUMAN</div>
+  </div>
+  <div class="subtitle">
+    An introduction to — Sylvia AI
+  </div>
+  <button class="btn" id="startBtn">Start Camera</button>
+</div>
+
+    <!-- slider -->
+    <div class="slider" id="sliderRoot">
+      <div class="slides" id="slides"></div>
+
+      <div class="controls">
+        <div class="arrow" id="prevBtn">
+          <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </div>
+        <div class="dots" id="dots"></div>
+        <div class="arrow" id="nextBtn">
+          <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- camera card -->
+    <div class="card">
+      <div class="cam-wrap" id="camWrap">
+        <video id="video" autoplay muted playsinline></video>
+        <div class="scan-ring">
+          <div class="ring-inner"></div>
+          <div class="ring-outer"></div>
+          <div class="sweep"></div>
+        </div>
+      </div>
+
+      <div class="mood-bar">
+        <div class="mood-text" id="moodText">Waiting to start...</div>
+        <div class="mood-actions" id="moodActions" style="display:none">
+          <button class="accept" id="acceptBtn">Accept</button>
+          <button class="retry" id="retryBtn">Retry</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ====== SLIDER ====== */
+const images = [
+  "https://images.unsplash.com/photo-1694903110330-cc64b7e1d21d?q=80&w=1932&auto=format&fit=crop",
+  "https://plus.unsplash.com/premium_photo-1683121718643-fb18d2668d53?q=80&w=1332&auto=format&fit=crop",
+  "https://plus.unsplash.com/premium_photo-1690297853326-e127726588ac?q=80&w=1332&auto=format&fit=crop"
+];
+
+const slidesEl = document.getElementById('slides');
+const dotsEl = document.getElementById('dots');
+let current = 0, slideNodes=[];
+
+images.forEach((src,i)=>{
+  const s = document.createElement('div'); s.className='slide';
+  const img = document.createElement('img');
+  img.dataset.src = src;
+  s.appendChild(img);
+  slidesEl.appendChild(s);
+
+  const d = document.createElement('div'); d.className='dot';
+  d.addEventListener('click', ()=>goTo(i));
+  dotsEl.appendChild(d);
+
+  const p = new Image();
+  p.onload = ()=>{ img.src = p.src; if(i===0){ s.classList.add('show'); d.classList.add('active'); } };
+  p.onerror = ()=>{ img.src = src; };
+  p.src = src;
+  slideNodes.push(s);
+});
+
+function refreshDots(){
+  Array.from(dotsEl.children).forEach((dot,idx)=> dot.classList.toggle('active', idx===current));
+}
+function showCurrent(){
+  slideNodes.forEach((s,idx)=> s.classList.toggle('show', idx===current));
+  refreshDots();
+}
+function next(){ current=(current+1)%slideNodes.length; showCurrent(); }
+function prev(){ current=(current-1+slideNodes.length)%slideNodes.length; showCurrent(); }
+function goTo(n){ current=n; showCurrent(); }
+document.getElementById('nextBtn').addEventListener('click', next);
+document.getElementById('prevBtn').addEventListener('click', prev);
+
+let sliderInterval = setInterval(next, 4200);
+document.getElementById('sliderRoot').addEventListener('mouseenter', ()=> clearInterval(sliderInterval));
+document.getElementById('sliderRoot').addEventListener('mouseleave', ()=> sliderInterval = setInterval(next, 4200));
+
+/* ====== CAMERA ====== */
+const MODEL_URL = './models';
+const startBtn = document.getElementById('startBtn');
+const video = document.getElementById('video');
+const moodText = document.getElementById('moodText');
+const moodActions = document.getElementById('moodActions');
+const acceptBtn = document.getElementById('acceptBtn');
+const retryBtn = document.getElementById('retryBtn');
+let detectInterval = null;
+let lastDetected = null;
+
+startBtn.addEventListener('click', startCamera);
+
+async function loadModels(){
+  try{
+    await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+    await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
+    return true;
+  }catch(e){
+    moodText.innerText = 'Model load failed';
+    return false;
+  }
+}
+
+async function startCamera(){
+  startBtn.disabled = true;
+  moodText.innerText = 'Preparing camera and models...';
+
+  const ok = await loadModels();
+  if(!ok){
+    startBtn.disabled = false;
+    return;
+  }
+
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 }, audio:false });
+    video.srcObject = stream;
+    await video.play();
+    moodText.innerText = 'Detecting mood...';
+
+    document.getElementById("camWrap").scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+
+    runDetectionLoop();
+  }catch(err){
+    moodText.innerText = 'Camera error';
+    startBtn.disabled = false;
+  }
+}
+
+function runDetectionLoop(){
+  if(detectInterval) clearInterval(detectInterval);
+  detectInterval = setInterval(()=> detectMood(), 450);
+}
+
+async function detectMood(){
+  if(!video || video.readyState < 2) return;
+
+  try{
+    const result = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
+    if(!result){
+      moodText.innerText = 'No face detected — look at camera.';
+      return;
+    }
+
+    const exps = result.expressions;
+    const pairs = Object.entries(exps).sort((a,b)=> b[1]-a[1]);
+    const [label,score] = pairs[0];
+    moodText.innerText = `Detected: ${label.toUpperCase()} — ${(score*100).toFixed(0)}%`;
+
+    if(score >= 0.55){
+      clearInterval(detectInterval);
+      detectInterval=null;
+      lastDetected={label,score};
+      showConfirmUI(label,score);
+    }
+  } catch(e){}
+}
+
+function showConfirmUI(label,score){
+  moodText.innerText = `FINAL: ${label.toUpperCase()} — ${(score*100).toFixed(0)}%`;
+  moodActions.style.display = 'flex';
+}
+
+acceptBtn.addEventListener('click', ()=>{
+  if(!lastDetected) return;
+
+  const mood = lastDetected.label.toLowerCase();
+  const score = (lastDetected.score*100).toFixed(0);
+
+  moodActions.style.display = 'none';
+  moodText.innerText = `LOCKED: ${mood.toUpperCase()}`;
+
+  document.body.style.transition = "opacity 0.7s ease";
+  document.body.style.opacity = "0";
+
+  setTimeout(() => {
+    window.location.href = `assist.html?mood=${mood}&score=${score}`;
+  }, 800);
+});
+
+retryBtn.addEventListener('click', ()=>{
+  lastDetected=null;
+  moodActions.style.display='none';
+  moodText.innerText='Retrying detection...';
+  setTimeout(()=> runDetectionLoop(), 600);
+});
+
+window.addEventListener('beforeunload', ()=>{
+  try{ if(video && video.srcObject) video.srcObject.getTracks().forEach(t=>t.stop()); }catch(e){}
+});
+</script>
+</body>
+</html>
+
+

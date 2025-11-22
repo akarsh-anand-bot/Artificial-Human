@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vibe Mode — Sylvia Ai</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="icon.png">
+  <style>
+    :root{
+      --bg:#05070a;
+      --panel:#0b0f14;
+      --neon-a: #00ffd4;
+      --neon-b: #7c5cff;
+      --muted: rgba(255,255,255,0.12);
+      --accent: #8ad7ff;
+      --glass: rgba(255,255,255,0.02);
+      --text:#e9f6f0;
+    }
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#020305,#07101a);font-family:'Poppins',sans-serif;color:var(--text)}
+    .wrap{max-width:1100px;margin:30px auto;padding:28px;display:flex;flex-direction:column;gap:18px}
+    .header{display:flex;justify-content:space-between;align-items:center}
+    .title{font-weight:800;font-size:32px;color:var(--neon-a)}
+    .subtitle{color:rgba(255,255,255,0.6)}
+
+    /* Mood */
+    .mood{display:flex;gap:14px;align-items:center}
+    .mood-icon{font-size:34px;background:rgba(255,255,255,0.02);padding:12px;border-radius:12px}
+    .mood-info .label{font-weight:700}
+    .mood-info .score{color:rgba(255,255,255,0.6);font-size:13px}
+
+    /* Grid */
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}
+    .card{border-radius:12px;padding:18px;background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:transform .18s ease, box-shadow .18s ease}
+    .card:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(0,0,0,0.6)}
+    .card.selected{outline:2px solid var(--neon-a);box-shadow:0 28px 80px rgba(0,255,212,0.03)}
+    .card h4{margin:0 0 8px;font-size:16px}
+    .card p{margin:0;color:rgba(255,255,255,0.6);font-size:13px}
+
+    /* Describe field & quicks */
+    .controls{display:flex;gap:12px;align-items:flex-start;margin-top:18px}
+    textarea#vibeText{flex:1;min-height:64px;border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);resize:vertical}
+    .col{display:flex;flex-direction:column;gap:8px}
+    .btn{padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:700}
+    .btn.primary{background:linear-gradient(90deg,var(--neon-a),var(--neon-b));color:#071018}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--text)}
+
+    .quick-row{display:flex;gap:8px;flex-wrap:wrap}
+    .quick{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px 12px;border-radius:999px;cursor:pointer;color:rgba(255,255,255,0.85)}
+
+    /* Results */
+    .results{display:grid;grid-template-columns:1fr 360px;gap:18px;margin-top:20px}
+    .panel{background:var(--panel);padding:14px;border-radius:12px;border:1px solid var(--glass)}
+    .tracks{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+    .track{display:flex;justify-content:space-between;padding:12px;border-radius:10px;background:rgba(255,255,255,0.02)}
+    .track .meta{display:flex;flex-direction:column}
+    .track .title{font-weight:700}
+    .track .artist{font-size:13px;color:rgba(255,255,255,0.7)}
+    .muted{color:rgba(255,255,255,0.6)}
+
+    /* responsive */
+    @media (max-width:960px){
+      .grid{grid-template-columns:repeat(2,1fr)}
+      .results{grid-template-columns:1fr}
+    }
+.header-center{
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  margin-bottom:10px;
+}
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header-center">
+      <div>
+        <div class="title">Vibe Mode</div>
+        <div class="subtitle">Pick a vibe or describe what you feel — quick playlists instantly.</div>
+      </div>
+
+      <div class="mood" id="moodBox" aria-hidden="true">
+        <div class="mood-icon" id="moodIcon">🎧</div>
+        <div class="mood-info">
+          <div class="label" id="moodTitle">Unknown</div>
+          <div class="score" id="moodScore">Confidence: —</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vibe cards -->
+    <div class="grid" id="vibeGrid">
+      <div class="card" data-vibe="chill"><h4>Chill / Lofi</h4><p>Slow beats, cozy background.</p></div>
+      <div class="card" data-vibe="hype"><h4>High Energy</h4><p>Fast, upbeat, hype tracks.</p></div>
+      <div class="card" data-vibe="romantic"><h4>Romantic</h4><p>Warm, emotional songs.</p></div>
+      <div class="card" data-vibe="dreamy"><h4>Dreamy / Ethereal</h4><p>Spacey pads and floaty vocals.</p></div>
+
+      <div class="card" data-vibe="night_drive"><h4>Night Drive</h4><p>Neon synths, cruising energy.</p></div>
+      <div class="card" data-vibe="rainy"><h4>Rainy Mood</h4><p>Soft rain beats, mellow keys.</p></div>
+      <div class="card" data-vibe="focus"><h4>Focus / Study</h4><p>Instrumental loops and lofi.</p></div>
+      <div class="card" data-vibe="party"><h4>Party / EDM</h4><p>Club-ready high BPM set.</p></div>
+    </div>
+
+    <!-- describe + quick -->
+    <div class="controls">
+      <textarea id="vibeText" placeholder="Describe your vibe in one line — e.g. 'sunset lofi bus ride'"></textarea>
+
+      <div class="col" style="width:220px">
+        <div style="display:flex;gap:8px">
+          <button id="genBtn" class="btn primary">Generate</button>
+          <button id="surpriseBtn" class="btn ghost">Surprise</button>
+        </div>
+
+        <div style="margin-top:8px">
+          <div class="muted" style="font-size:13px">Quick prompts</div>
+          <div class="quick-row" style="margin-top:8px">
+            <button class="quick" data-preset="sunset lofi bus ride">Sunset lofi</button>
+            <button class="quick" data-preset="neon night drive synthwave">Night drive</button>
+            <button class="quick" data-preset="rainy warm coffee vibes">Rainy & cozy</button>
+            <button class="quick" data-preset="main character energy pop">Main character</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- results -->
+    <div class="results">
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong id="resultsLabel">Playlist</strong>
+          <div class="muted" id="resultsMeta">No results</div>
+        </div>
+
+        <div id="tracks" class="tracks"></div>
+        <div id="noHint" class="muted" style="display:none;margin-top:12px">No songs found — try another vibe.</div>
+      </div>
+
+      <div class="panel">
+        <strong>Vibe Snapshot</strong>
+        <div id="snapshot" style="margin-top:12px;color:rgba(255,255,255,0.9)">
+          Pick a vibe or describe one — results will appear here.
+        </div>
+
+        <div style="margin-top:12px">
+          <strong>Actions</strong>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+            <button class="btn ghost" id="openSpotifyAll">Open all in Spotify</button>
+            <button class="btn ghost" id="backBtn" onclick="history.back()">← Back</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // read mood params
+  const params = new URLSearchParams(window.location.search);
+  const moodParam = (params.get('mood') || '').toLowerCase();
+  const scoreParam = params.get('score');
+
+  const MOOD_MAP = {
+    happy:{emoji:"😄", label:"Happy"},
+    sad:{emoji:"😢", label:"Sad"},
+    angry:{emoji:"😠", label:"Angry"},
+    surprised:{emoji:"😲", label:"Surprised"},
+    disgusted:{emoji:"🤢", label:"Disgusted"},
+    fearful:{emoji:"😨", label:"Fearful"},
+    neutral:{emoji:"😐", label:"Neutral"}
+  };
+
+  const moodBox = document.getElementById('moodBox');
+  const moodIcon = document.getElementById('moodIcon');
+  const moodTitle = document.getElementById('moodTitle');
+  const moodScore = document.getElementById('moodScore');
+
+  if (moodParam) {
+    const meta = MOOD_MAP[moodParam] || {emoji:'🎧',label:'Unknown'};
+    moodIcon.textContent = meta.emoji;
+    moodTitle.textContent = meta.label;
+    moodScore.textContent = scoreParam ? `Confidence: ${scoreParam}%` : 'Confidence: —';
+    moodBox.setAttribute('aria-hidden','false');
+  } else {
+    // hide mood box when absent for cleaner UI
+    moodBox.style.display = 'none';
+  }
+
+  // UI hooks
+  const cards = Array.from(document.querySelectorAll('.card'));
+  const vibeText = document.getElementById('vibeText');
+  const genBtn = document.getElementById('genBtn');
+  const surpriseBtn = document.getElementById('surpriseBtn');
+  const quickBtns = Array.from(document.querySelectorAll('.quick'));
+  const tracksEl = document.getElementById('tracks');
+  const resultsMeta = document.getElementById('resultsMeta');
+  const resultsLabel = document.getElementById('resultsLabel');
+  const snapshot = document.getElementById('snapshot');
+  const noHint = document.getElementById('noHint');
+  const openSpotifyAll = document.getElementById('openSpotifyAll');
+
+  let selectedVibe = null;
+  let currentTracks = [];
+
+  // select card
+  function selectCard(cardEl){
+    cards.forEach(c=>c.classList.remove('selected'));
+    cardEl.classList.add('selected');
+    selectedVibe = cardEl.dataset.vibe;
+    vibeText.placeholder = `Describe your vibe for ${cardEl.querySelector('h4').textContent}…`;
+  }
+  cards.forEach(c=>{
+    c.addEventListener('click', ()=>selectCard(c));
+    c.addEventListener('keydown', (e)=>{ if(e.key==='Enter') selectCard(c); });
+  });
+
+  // quick prompts
+  quickBtns.forEach(b=>{
+    b.addEventListener('click', ()=> {
+      vibeText.value = b.dataset.preset;
+      generate();
+    });
+  });
+
+  surpriseBtn.addEventListener('click', ()=>{
+    // random vibe pick + random short prompts
+    const allVibes = cards.map(c=>c.dataset.vibe);
+    const rand = allVibes[Math.floor(Math.random()*allVibes.length)];
+    const pick = cards.find(c=>c.dataset.vibe===rand);
+    selectCard(pick);
+    const samples = [
+      'late night synthwave chill',
+      'sunset acoustic road trip',
+      'rainy coffee shop lo-fi',
+      'energetic gym playlist',
+      'dreamy ambient pads'
+    ];
+    vibeText.value = samples[Math.floor(Math.random()*samples.length)];
+    generate();
+  });
+
+  // render helper
+  function renderTracks(list, meta){
+    currentTracks = list || [];
+    tracksEl.innerHTML = '';
+    if(!list || !list.length){
+      noHint.style.display = 'block';
+      resultsMeta.textContent = 'No results';
+      return;
+    }
+    noHint.style.display = 'none';
+    resultsLabel.textContent = meta?.label ? `${meta.label}` : 'Playlist';
+    resultsMeta.textContent = `${list.length} tracks • ${meta?.sub || ''}`;
+
+    list.forEach(track=>{
+      const t = document.createElement('div');
+      t.className = 'track';
+      t.innerHTML = `
+        <div class="meta">
+          <div class="title">${track.title}</div>
+          <div class="artist">${track.artist}</div>
+        </div>
+        <div><a href="${track.url}" target="_blank" style="color:var(--accent);font-weight:700">Open →</a></div>
+      `;
+      tracksEl.appendChild(t);
+    });
+  }
+
+  // Open all (best-effort): opens first track in spotify, or builds a search url
+  openSpotifyAll.addEventListener('click', ()=>{
+    if(!currentTracks || !currentTracks.length) return;
+    // open first track
+    window.open(currentTracks[0].url, '_blank');
+  });
+
+  // build payload & call endpoint
+  async function generate(){
+    const prompt = (vibeText.value || '').trim();
+    const payload = {
+      mode: 'vibe',
+      vibe: selectedVibe || 'custom',
+      prompt: prompt || null,
+      mood: moodParam || null
+    };
+
+    snapshot.textContent = 'Finding tracks…';
+    genBtn.disabled = true;
+
+    try {
+      const res = await fetch('/spotify/vibe', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+
+      if(!res.ok){
+        const e = await res.json().catch(()=>({error:'Server error'}));
+        snapshot.textContent = 'Server error: ' + (e.error || 'unknown');
+        genBtn.disabled = false;
+        return;
+      }
+
+      const data = await res.json();
+      renderTracks(data.tracks || [], data.meta || {});
+      snapshot.innerHTML = data.meta?.snapshot || 'Enjoy your vibe!';
+    } catch(err){
+      snapshot.textContent = 'Network error — check server';
+    } finally {
+      genBtn.disabled = false;
+    }
+  }
+
+  genBtn.addEventListener('click', generate);
+
+  // Press Enter to generate when typing (single Enter)
+  vibeText.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      generate();
+    }
+  });
+
+  // default selection
+  selectCard(cards[0]);
+</script>
+</body>
+</html>
