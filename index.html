@@ -75,18 +75,21 @@ html,body{
   transform:translateY(-4px);
   box-shadow:0 10px 34px rgba(0,255,170,0.18);
 }
-  .about-link{
-  display:inline-block;
-  margin-top:18px;
-  font-size:16px;
-  color:var(--neon);
-  text-decoration:none;
-  opacity:0.8;
+  .about-link {
+  display: block;
+  margin-top: 18px;
+  font-size: 17px;
+  text-align: center;
+  color: var(--neon);
+  text-decoration: none;
+  opacity: 0.85;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.about-link:hover{
-  opacity:1;
-  text-shadow:0 0 8px rgba(10,255,150,0.4);
+.about-link:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+  text-shadow: 0 0 8px rgba(10,255,150,0.4);
 }
 
 /* ---- Slider ---- */
@@ -535,6 +538,7 @@ window.addEventListener('beforeunload', ()=>{
 </script>
 </body>
 </html>
+
 
 
 
