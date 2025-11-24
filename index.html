@@ -75,6 +75,19 @@ html,body{
   transform:translateY(-4px);
   box-shadow:0 10px 34px rgba(0,255,170,0.18);
 }
+  .about-link{
+  display:inline-block;
+  margin-top:18px;
+  font-size:16px;
+  color:var(--neon);
+  text-decoration:none;
+  opacity:0.8;
+}
+
+.about-link:hover{
+  opacity:1;
+  text-shadow:0 0 8px rgba(10,255,150,0.4);
+}
 
 /* ---- Slider ---- */
 .slider{
@@ -312,8 +325,8 @@ or nostalgic soundtracks tailored to your emotional state.
   </div>
 
   <button class="btn" id="startBtn">Start Camera</button>
-</div>
-
+</div> 
+  <a href="about.html" class="about-link">Learn more about Sylvia →</a>
 <!-- SLIDER -->
 <div class="slider" id="sliderRoot">
   <div class="slides" id="slides"></div>
@@ -522,6 +535,7 @@ window.addEventListener('beforeunload', ()=>{
 </script>
 </body>
 </html>
+
 
 
 
