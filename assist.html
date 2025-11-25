@@ -133,6 +133,24 @@
       color:#04120a;
       border:none;padding:12px 22px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;
     }
+    /* ---- FOOTER ---- */
+footer{
+  width:100%;
+  background:#0a0a0a;
+  margin-top:80px;
+  padding:32px 12px;
+  text-align:center;
+  border-top:1px solid rgba(255,255,255,0.05);
+  opacity:0.9;
+}
+
+footer p{
+  margin:6px 0;
+  font-size:15px;
+  color:rgba(255,255,255,0.7);
+}
+
+footer:hover{ opacity:1; }
   </style>
 </head>
 <body>
@@ -159,7 +177,10 @@
 
     <button class="back-btn" onclick="history.back()">← Back</button>
   </div>
-
+<footer>
+  <p>👨‍💻 Built by Akarsh Anand &nbsp;|&nbsp; 🤖 Sylvia AI </p>
+  <p>© 2025 Artificial Human — All Rights Reserved</p>
+</footer>
   <script>
     /* ---- Mood → UI mapping ---- */
     const MOOD_MAP = {
@@ -234,3 +255,4 @@
 
 </body>
 </html>
+
