@@ -1,6 +1,5 @@
 // =============================
-//        server.js (FLOW MODE)
-// =============================
+//       server.js 
 
 require("dotenv").config();
 require("dotenv").config({ path: ".env.spotify" });
@@ -377,9 +376,64 @@ Respond as Sylvia in 2–20 sentences.
   }
 });
 // =============================
+//   SESSION SUMMARY ENDPOINT
+// =============================
+app.post("/api/session-summary", async (req, res) => {
+  try {
+    const { history } = req.body;
+
+    // Basic validation
+    if (!Array.isArray(history) || history.length < 2) {
+      return res.status(400).json({ error: "Not enough conversation history" });
+    }
+
+    // Create a transcript for the model
+    const transcript = history
+      .map(h => `${h.role === "assistant" ? "Sylvia" : "User"}: ${h.content}`)
+      .join("\n");
+
+    const OpenAI = require("openai");
+    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+    // Request a short grounded reflection
+    const completion = await client.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: `
+You are Sylvia. Generate a single-sentence reflective summary based ONLY on the user's messages in the transcript.
+Be grounded and specific — no motivational quotes, no generic platitudes, no long philosophical lines.
+Return just one concise sentence (max 25 words) that captures a real observation from the conversation.
+Examples:
+"It seems like you were holding a quiet tiredness today." 
+"You focused on feeling anxious about sleep and work."
+Do not include instructions or signoff — only the sentence.
+`
+        },
+        { role: "user", content: transcript }
+      ],
+      max_tokens: 60,
+      temperature: 0.45
+    });
+
+    const raw = completion.choices?.[0]?.message?.content?.trim();
+    const summary = raw && raw.length ? raw : "You held more calm than you might realise today.";
+
+    // sanitize newlines (return single line)
+    const oneLine = summary.replace(/\n+/g, " ").trim();
+
+    res.json({ summary: oneLine });
+  } catch (err) {
+    console.error("Summary Error:", err?.response?.data || err?.message || err);
+    res.status(500).json({ error: "Server error generating summary" });
+  }
+});
+// =============================
 app.listen(PORT, () =>
   console.log(`🔥 Server running @ http://localhost:${PORT}`)
 
 );
+
 
 
