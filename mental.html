@@ -205,14 +205,7 @@
       cursor:pointer;
     }
 
-    button#backBtn{
-      background:transparent;
-      border:1px solid rgba(255,255,255,0.06);
-      color:#fff;
-      padding:10px 14px;
-      border-radius:8px;
-      cursor:pointer;
-    }
+  
 
     .meta-note{
       font-size:13px;
@@ -245,7 +238,16 @@
         <textarea id="userInput" placeholder="Type your message here..."></textarea>
         <div style="display:flex;flex-direction:column;gap:8px">
           <button id="sendBtn">Send</button>
-          <button id="backBtn" onclick="history.back()">← Back</button>
+          <button id="endBtn" style="
+  background:#111;
+  color:#fff;
+  border:1px solid rgba(255,255,255,0.08);
+  padding:10px 14px;
+  border-radius:10px;
+  font-weight:700;
+  cursor:pointer;
+  margin-left:8px;
+">End Session</button>
         </div>
       </div>
 
@@ -376,6 +378,54 @@ async function sendMessage(){
     sendBtn.disabled = false;
   }
 }
+  // END SESSION logic
+const endBtn = document.getElementById("endBtn");
+const sessionModal = document.getElementById("sessionModal");
+const reflectionText = document.getElementById("reflectionText");
+const redirectNote = document.getElementById("redirectNote");
+
+endBtn.addEventListener("click", async () => {
+  // if no meaningful history, fallback immediately
+  if (!chatHistory || chatHistory.length < 2) {
+    reflectionText.textContent = "You made space for yourself today. Small steps matter.";
+    sessionModal.style.display = "flex";
+    startRedirectCountdown(4);
+    return;
+  }
+
+  // show modal while fetching
+  reflectionText.textContent = "Thinking about our conversation…";
+  redirectNote.textContent = "Returning to home in 20s…";
+  sessionModal.style.display = "flex";
+
+  try {
+    const resp = await fetch("/api/session-summary", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ history: chatHistory })
+    });
+    const data = await resp.json();
+    reflectionText.textContent = (data && data.summary) ? data.summary : "You held more calm than you might realise today.";
+  } catch (err) {
+    console.error("Session summary fetch failed:", err);
+    reflectionText.textContent = "You made space for yourself. Take that calm forward.";
+  }
+
+  startRedirectCountdown(20);
+});
+
+function startRedirectCountdown(seconds) {
+  let s = seconds;
+  redirectNote.textContent = `Returning to home in ${s}s…`;
+  const t = setInterval(()=> {
+    s--;
+    redirectNote.textContent = `Returning to home in ${s}s…`;
+    if (s <= 0) {
+      clearInterval(t);
+      window.location.href = "index.html";
+    }
+  }, 1000);
+}
 
 /* ========= Enter Keybind ========= */
 sendBtn.addEventListener("click", sendMessage);
@@ -387,10 +437,32 @@ userInput.addEventListener("keydown", (e)=>{
     sendMessage();
   }
 });
+  <!-- Session complete modal -->
+<div id="sessionModal" style="
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);z-index:9999;">
+  <div style="
+    width:90%;max-width:520px;background:rgba(10,10,10,0.98);
+    border-radius:14px;padding:28px;text-align:center;
+    border:1px solid rgba(255,255,255,0.04);box-shadow:0 20px 60px rgba(0,0,0,0.6);
+  ">
+    <div style="font-size:46px;color:#00ffa0;margin-bottom:6px;">✔</div>
+    <h2 style="margin:0 0 8px;color:#00ffa0;">Session complete</h2>
+    <p id="reflectionText" style="color:rgba(255,255,255,0.9);margin:12px 0;font-size:16px;line-height:1.4"></p>
+    <p style="opacity:0.7;margin:10px 0;">
+      See you tomorrow, for fixing and handling your mood tantrums. <br>
+           Your personal mood assistant Sylvia.❤️
+    </p>
+    <p id="redirectNote" style="opacity:0.6;margin-top:8px;">Returning to home in 20s…</p>
+  </div>
+</div>
+
 
 /* ========= First message ========= */
 appendAI("Hi — I’m Sylvia. Tell me what’s on your mind");
 </script>
 </body>
 </html>
+
 
