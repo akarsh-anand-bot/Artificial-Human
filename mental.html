@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Mental Assistance — Artificial Human</title>
- <link rel="icon" type="image/png" href="icon.png">
+  <link rel="icon" type="image/png" href="icon.png">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
 
 <!-- Google Analytics -->
@@ -21,17 +21,15 @@
   :root{
     --bg:#0c0c0d;
     --neon:#00ffa0;
-    --muted: rgba(255,255,255,0.12);
     --glass: rgba(255,255,255,0.02);
-    --card-radius:14px;
   }
 
   html,body{
-    height:100%;
     margin:0;
     background:var(--bg);
     font-family:'Poppins',sans-serif;
     color:#fff;
+    height:100%;
   }
 
   .wrap{
@@ -47,59 +45,37 @@
     font-weight:800;
     font-size:32px;
     color:var(--neon);
-    letter-spacing:1px;
   }
 
   .subtitle{
     color:rgba(255,255,255,0.7);
-    margin-bottom:6px;
   }
 
   .mood-box{
     display:flex;
     gap:18px;
-    align-items:center;
     padding:18px;
     border-radius:12px;
     background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
     border:1px solid rgba(255,255,255,0.04);
-    box-shadow:0 18px 40px rgba(0,0,0,0.6);
+    box-shadow:0 18px 40px rgba(0,0,0,0.5);
   }
 
   .mood-icon{
-    width:88px;
-    height:88px;
-    border-radius:12px;
+    width:88px;height:88px;
     display:flex;
     align-items:center;
     justify-content:center;
+    background:rgba(255,255,255,0.05);
+    border-radius:12px;
     font-size:40px;
-    background:rgba(255,255,255,0.02);
-    border:1px solid rgba(255,255,255,0.03);
-  }
-
-  .mood-title{
-    font-weight:700;
-    font-size:22px;
-    margin-top:6px;
-  }
-
-  .mood-score{
-    margin-top:6px;
-    color:rgba(255,255,255,0.6);
-    font-size:13px;
   }
 
   .chat-card{
-    margin-top:12px;
     padding:18px;
     border-radius:12px;
     background:var(--glass);
     border:1px solid rgba(255,255,255,0.03);
-    box-shadow:0 18px 30px rgba(0,0,0,0.6);
-    display:flex;
-    flex-direction:column;
-    gap:12px;
   }
 
   #chatLog{
@@ -109,22 +85,17 @@
     padding:12px;
     border-radius:10px;
     background:rgba(0,0,0,0.35);
-    border:1px solid rgba(255,255,255,0.02);
-    font-size:15px;
-    line-height:1.55;
-    white-space:pre-wrap;
     display:flex;
     flex-direction:column;
     gap:12px;
-    scroll-behavior:smooth;
   }
 
   .ai-msg{
-    background:rgba(255,255,255,0.10);
+    background:rgba(255,255,255,0.15);
     padding:10px 14px;
     border-radius:10px;
     max-width:75%;
-    animation:fadeIn 0.35s forwards;
+    animation:fadeIn .35s forwards;
   }
 
   .user-msg{
@@ -134,7 +105,7 @@
     border-radius:10px;
     max-width:75%;
     margin-left:auto;
-    animation:fadeIn 0.35s forwards;
+    animation:fadeIn .35s forwards;
     font-weight:600;
   }
 
@@ -143,48 +114,73 @@
     to{opacity:1}
   }
 
-  .controls{
+  /* Typing animation */
+  .typing-bubble {
     display:flex;
-    gap:10px;
-    align-items:flex-start;
+    align-items:center;
+    gap:8px;
+    background:rgba(255,255,255,0.10);
+    padding:10px 14px;
+    border-radius:10px;
+    width:fit-content;
+    font-size:14px;
+    color:#bdbdbd;
+    opacity:0.85;
   }
 
-  textarea#userInput{
+  .typing-dots span{
+    height:6px;width:6px;
+    background:#00ffa0;
+    border-radius:50%;
+    display:inline-block;
+    margin-right:4px;
+    animation:blink 1.4s infinite ease-in-out both;
+  }
+
+  .typing-dots span:nth-child(2){ animation-delay:.2s }
+  .typing-dots span:nth-child(3){ animation-delay:.4s }
+
+  @keyframes blink{
+    0%{opacity:.2}
+    20%{opacity:1}
+    100%{opacity:.2}
+  }
+
+  textarea{
     flex:1;
     min-height:80px;
     border-radius:10px;
     padding:12px;
-    border:1px solid rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.08);
     background:transparent;
     color:#fff;
-    resize:vertical;
   }
 
-  button#sendBtn, button#endBtn{
+  button{
     padding:12px 18px;
-    border-radius:10px;
     font-weight:700;
+    border-radius:10px;
     cursor:pointer;
   }
 
-  #sendBtn{
-    background:var(--neon);
-    color:#04120a;
-    border:0;
-  }
-
+  #sendBtn{ background:var(--neon); color:#04120a; border:0; }
   #endBtn{
     background:#111;
-    color:#fff;
     border:1px solid rgba(255,255,255,0.08);
-    margin-left:8px;
+    color:#fff;
   }
 
-  .meta-note{
-    font-size:13px;
-    color:rgba(255,255,255,0.55);
-    margin-top:6px;
+  #sessionModal{
+    position:fixed;
+    top:0;left:0;width:100%;height:100%;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,0,0,0.6);
+    backdrop-filter:blur(6px);
+    z-index:9999;
   }
+
 </style>
 </head>
 
@@ -199,15 +195,15 @@
       <div id="moodIcon" class="mood-icon">🤖</div>
       <div>
         <h3>What's the mood today</h3>
-        <div id="moodTitle" class="mood-title">Loading…</div>
-        <div id="moodScore" class="mood-score">Confidence: —</div>
+        <div id="moodTitle"></div>
+        <div id="moodScore" style="opacity:0.7"></div>
       </div>
     </div>
 
     <div class="chat-card">
       <div id="chatLog"></div>
 
-      <div class="controls">
+      <div style="display:flex;gap:10px;margin-top:10px;">
         <textarea id="userInput" placeholder="Type your message here..."></textarea>
         <div style="display:flex;flex-direction:column;gap:8px">
           <button id="sendBtn">Send</button>
@@ -215,76 +211,96 @@
         </div>
       </div>
 
-      <div class="meta-note">Response style adapts to your mood.</div>
     </div>
   </div>
 
-<!-- SESSION MODAL -->
-<div id="sessionModal" style="
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  display:none;align-items:center;justify-content:center;
-  background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);z-index:9999;">
+<!-- Modal -->
+<div id="sessionModal">
   <div style="
-    width:90%;max-width:520px;background:rgba(10,10,10,0.98);
-    border-radius:14px;padding:28px;text-align:center;
-    border:1px solid rgba(255,255,255,0.04);box-shadow:0 20px 60px rgba(0,0,0,0.6);
+    width:90%;max-width:520px;
+    background:#0a0a0a;
+    padding:28px;border-radius:14px;
+    text-align:center;border:1px solid rgba(255,255,255,0.05);
   ">
-    <div style="font-size:46px;color:#00ffa0;margin-bottom:6px;">✔</div>
-    <h2 style="margin:0 0 8px;color:#00ffa0;">Session complete</h2>
-    <p id="reflectionText" style="color:rgba(255,255,255,0.9);margin:12px 0;font-size:16px;line-height:1.4"></p>
-    <p style="opacity:0.7;margin:10px 0;">
-      See you tomorrow, for fixing and handling your mood tantrums. <br>
-      Your personal mood assistant Sylvia ❤️
+    <div style="font-size:46px;color:#00ffa0;">✔</div>
+    <h2 style="color:#00ffa0;">Session complete</h2>
+
+    <p id="reflectionText" style="line-height:1.4;"></p>
+
+    <p style="opacity:.7;margin-top:12px;">
+      See you tomorrow, for fixing and handling your mood tantrums.  
+      <br>Your personal mood assistant Sylvia ❤️
     </p>
-    <p id="redirectNote" style="opacity:0.6;margin-top:8px;">Returning to home in 20s…</p>
+
+    <p id="redirectNote" style="opacity:.6;">Returning in 20s…</p>
   </div>
 </div>
 
 <script>
-/* ========= Mood handling ========= */
+/* ========= Mood ========= */
 const params = new URLSearchParams(window.location.search);
-const moodParam = (params.get('mood') || 'neutral').toLowerCase();
-const scoreParam = parseInt(params.get('score') || '0', 10);
+const moodParam = (params.get("mood") || "neutral").toLowerCase();
+const scoreParam = parseInt(params.get("score") || 0);
 
 const MOOD_MAP = {
-  happy:{emoji:"😄", label:"Happy"},
-  sad:{emoji:"😢", label:"Sad"},
-  angry:{emoji:"😠", label:"Angry"},
-  surprised:{emoji:"😲", label:"Surprised"},
-  disgusted:{emoji:"🤢", label:"Disgusted"},
-  fearful:{emoji:"😨", label:"Fearful"},
-  neutral:{emoji:"😐", label:"Neutral"}
+  happy:{ emoji:"😄", label:"Happy" },
+  sad:{ emoji:"😢", label:"Sad" },
+  angry:{ emoji:"😠", label:"Angry" },
+  surprised:{ emoji:"😲", label:"Surprised" },
+  disgusted:{ emoji:"🤢", label:"Disgusted" },
+  fearful:{ emoji:"😨", label:"Fearful" },
+  neutral:{ emoji:"😐", label:"Neutral" }
 };
 
-document.getElementById('moodIcon').textContent = MOOD_MAP[moodParam]?.emoji || "🤖";
-document.getElementById('moodTitle').textContent = MOOD_MAP[moodParam]?.label || "Neutral";
-document.getElementById('moodScore').textContent = `Confidence: ${scoreParam || "—"}%`;
+document.getElementById("moodIcon").textContent = MOOD_MAP[moodParam]?.emoji || "🤖";
+document.getElementById("moodTitle").textContent = MOOD_MAP[moodParam]?.label || "Neutral";
+document.getElementById("moodScore").textContent = `Confidence: ${scoreParam}%`;
 
 /* ========= Chat logic ========= */
+
 let chatHistory = [];
+const chatLog = document.getElementById("chatLog");
+const userInput = document.getElementById("userInput");
+const sendBtn = document.getElementById("sendBtn");
 
-const chatLog = document.getElementById('chatLog');
-const userInput = document.getElementById('userInput');
-const sendBtn = document.getElementById('sendBtn');
+/* Typing */
+let typingBubble = null;
 
-function autoScroll(){
+function showTyping(){
+  if (typingBubble) return;
+  typingBubble = document.createElement("div");
+  typingBubble.className = "typing-bubble";
+  typingBubble.innerHTML = `
+    Sylvia is typing
+    <div class="typing-dots">
+      <span></span><span></span><span></span>
+    </div>`;
+  chatLog.appendChild(typingBubble);
   chatLog.scrollTop = chatLog.scrollHeight;
 }
 
+function hideTyping(){
+  if (typingBubble) {
+    typingBubble.remove();
+    typingBubble = null;
+  }
+}
+
 function appendAI(text){
-  const msg = document.createElement('div');
-  msg.className = 'ai-msg';
+  hideTyping();
+  const msg = document.createElement("div");
+  msg.className = "ai-msg";
   msg.textContent = text;
   chatLog.appendChild(msg);
-  autoScroll();
+  chatLog.scrollTop = chatLog.scrollHeight;
 }
 
 function appendUser(text){
-  const msg = document.createElement('div');
-  msg.className = 'user-msg';
+  const msg = document.createElement("div");
+  msg.className = "user-msg";
   msg.textContent = text;
   chatLog.appendChild(msg);
-  autoScroll();
+  chatLog.scrollTop = chatLog.scrollHeight;
 }
 
 async function sendMessage(){
@@ -292,17 +308,17 @@ async function sendMessage(){
   if (!text) return;
 
   appendUser(text);
-
   chatHistory.push({ role:"user", content:text });
-
   userInput.value = "";
-  sendBtn.disabled = true;
 
-  try{
+  sendBtn.disabled = true;
+  showTyping();
+
+  try {
     const res = await fetch("/api/chat", {
       method:"POST",
       headers:{ "Content-Type":"application/json" },
-      body:JSON.stringify({ 
+      body:JSON.stringify({
         userMessage:text,
         mood:moodParam,
         history:chatHistory
@@ -310,14 +326,12 @@ async function sendMessage(){
     });
 
     const data = await res.json();
-    const reply = data.reply || "Something went wrong.";
-
+    const reply = data.reply || "I'm right here with you.";
     appendAI(reply);
-
     chatHistory.push({ role:"assistant", content:reply });
 
-  } catch(err){
-    appendAI("Network error. Please try again.");
+  } catch(e){
+    appendAI("Network error — try again.");
   }
 
   sendBtn.disabled = false;
@@ -331,18 +345,17 @@ const redirectNote = document.getElementById("redirectNote");
 
 endBtn.addEventListener("click", async () => {
 
-  // no history?
   if (chatHistory.length < 2) {
-    reflectionText.textContent = "You made space for yourself today. Small steps matter.";
+    reflectionText.textContent = "You made space for yourself today. That counts.";
     sessionModal.style.display = "flex";
-    startRedirectCountdown(19);
+    startRedirectCountdown(4);
     return;
   }
 
   reflectionText.textContent = "Thinking about our conversation…";
   sessionModal.style.display = "flex";
 
-  try {
+  try{
     const resp = await fetch("/api/session-summary", {
       method:"POST",
       headers:{ "Content-Type":"application/json" },
@@ -350,24 +363,20 @@ endBtn.addEventListener("click", async () => {
     });
 
     const data = await resp.json();
-
-    reflectionText.textContent =
-      data.summary || "You held more calm than you realize today.";
+    reflectionText.textContent = data.summary || "You showed more calm than you think.";
 
   } catch(e){
-    reflectionText.textContent = "You made space for yourself. Take that calm forward.";
+    reflectionText.textContent = "You made space for yourself today. Carry that forward.";
   }
 
   startRedirectCountdown(20);
 });
 
 function startRedirectCountdown(s){
-  redirectNote.textContent = `Returning to home in ${s}s…`;
-
+  redirectNote.textContent = `Returning in ${s}s…`;
   const timer = setInterval(()=>{
     s--;
-    redirectNote.textContent = `Returning to home in ${s}s…`;
-
+    redirectNote.textContent = `Returning in ${s}s…`;
     if (s <= 0){
       clearInterval(timer);
       window.location.href = "index.html";
@@ -375,9 +384,7 @@ function startRedirectCountdown(s){
   }, 1000);
 }
 
-/* ========= Keybind ========= */
-sendBtn.addEventListener("click", sendMessage);
-
+/* Enter to send */
 userInput.addEventListener("keydown", (e)=>{
   if (e.key === "Enter" && !e.shiftKey){
     e.preventDefault();
@@ -385,8 +392,10 @@ userInput.addEventListener("keydown", (e)=>{
   }
 });
 
-/* ========= First Message ========= */
-appendAI("Hi — I’m Sylvia. Tell me what’s on your mind");
+sendBtn.addEventListener("click", sendMessage);
+
+/* First AI message */
+appendAI("Hi — I’m Sylvia. Tell me what's on your mind.");
 </script>
 
 </body>
