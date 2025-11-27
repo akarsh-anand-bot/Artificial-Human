@@ -6,6 +6,7 @@
   <title>Mental Assistance — Artificial Human</title>
  <link rel="icon" type="image/png" href="icon.png">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-9T45FS7BXJ"></script>
 <script>
@@ -16,203 +17,175 @@
 </script>
 <!-- End Google Analytics -->
 
-  <style>
-    :root{
-      --bg:#0c0c0d;
-      --neon:#00ffa0;
-      --muted: rgba(255,255,255,0.12);
-      --glass: rgba(255,255,255,0.02);
-      --card-radius:14px;
-    }
+<style>
+  :root{
+    --bg:#0c0c0d;
+    --neon:#00ffa0;
+    --muted: rgba(255,255,255,0.12);
+    --glass: rgba(255,255,255,0.02);
+    --card-radius:14px;
+  }
 
-    html,body{
-      height:100%;
-      margin:0;
-      background:var(--bg);
-      font-family:'Poppins',sans-serif;
-      color:#fff;
-    }
+  html,body{
+    height:100%;
+    margin:0;
+    background:var(--bg);
+    font-family:'Poppins',sans-serif;
+    color:#fff;
+  }
 
-    .wrap{
-      max-width:980px;
-      margin:36px auto;
-      padding:28px;
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-    }
+  .wrap{
+    max-width:980px;
+    margin:36px auto;
+    padding:28px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
 
-    .title{
-      font-weight:800;
-      font-size:32px;
-      color:var(--neon);
-      letter-spacing:1px;
-    }
+  .title{
+    font-weight:800;
+    font-size:32px;
+    color:var(--neon);
+    letter-spacing:1px;
+  }
 
-    .subtitle{
-      color:rgba(255,255,255,0.7);
-      margin-bottom:6px;
-    }
+  .subtitle{
+    color:rgba(255,255,255,0.7);
+    margin-bottom:6px;
+  }
 
-    .mood-box{
-      display:flex;
-      gap:18px;
-      align-items:center;
-      padding:18px;
-      border-radius:12px;
-      background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
-      border:1px solid rgba(255,255,255,0.04);
-      box-shadow:0 18px 40px rgba(0,0,0,0.6);
-    }
+  .mood-box{
+    display:flex;
+    gap:18px;
+    align-items:center;
+    padding:18px;
+    border-radius:12px;
+    background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
+    border:1px solid rgba(255,255,255,0.04);
+    box-shadow:0 18px 40px rgba(0,0,0,0.6);
+  }
 
-    .mood-icon{
-      width:88px;
-      height:88px;
-      border-radius:12px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:40px;
-      background:rgba(255,255,255,0.02);
-      border:1px solid rgba(255,255,255,0.03);
-    }
+  .mood-icon{
+    width:88px;
+    height:88px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:40px;
+    background:rgba(255,255,255,0.02);
+    border:1px solid rgba(255,255,255,0.03);
+  }
 
-    .mood-title{
-      font-weight:700;
-      font-size:22px;
-      margin-top:6px;
-    }
+  .mood-title{
+    font-weight:700;
+    font-size:22px;
+    margin-top:6px;
+  }
 
-    .mood-score{
-      margin-top:6px;
-      color:rgba(255,255,255,0.6);
-      font-size:13px;
-    }
+  .mood-score{
+    margin-top:6px;
+    color:rgba(255,255,255,0.6);
+    font-size:13px;
+  }
 
-    .chat-card{
-      margin-top:12px;
-      padding:18px;
-      border-radius:12px;
-      background:var(--glass);
-      border:1px solid rgba(255,255,255,0.03);
-      box-shadow:0 18px 30px rgba(0,0,0,0.6);
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-    }
+  .chat-card{
+    margin-top:12px;
+    padding:18px;
+    border-radius:12px;
+    background:var(--glass);
+    border:1px solid rgba(255,255,255,0.03);
+    box-shadow:0 18px 30px rgba(0,0,0,0.6);
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
 
-    #chatLog{
-      min-height:220px;
-      max-height:520px;
-      overflow:auto;
-      padding:12px;
-      border-radius:10px;
-      background:rgba(0,0,0,0.35);
-      border:1px solid rgba(255,255,255,0.02);
-      font-size:15px;
-      line-height:1.55;
-      white-space:pre-wrap;
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-      scroll-behavior:smooth;
-    }
+  #chatLog{
+    min-height:220px;
+    max-height:520px;
+    overflow:auto;
+    padding:12px;
+    border-radius:10px;
+    background:rgba(0,0,0,0.35);
+    border:1px solid rgba(255,255,255,0.02);
+    font-size:15px;
+    line-height:1.55;
+    white-space:pre-wrap;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    scroll-behavior:smooth;
+  }
 
-    .ai-msg{
-      background:rgba(255,255,255,0.10);
-      padding:10px 14px;
-      border-radius:10px;
-      max-width:75%;
-      width:fit-content;
-      opacity:0;
-      animation:fadeIn 0.35s forwards;
-    }
+  .ai-msg{
+    background:rgba(255,255,255,0.10);
+    padding:10px 14px;
+    border-radius:10px;
+    max-width:75%;
+    animation:fadeIn 0.35s forwards;
+  }
 
-    .user-msg{
-      background:#00ffa0;
-      color:#04120a;
-      padding:10px 14px;
-      border-radius:10px;
-      max-width:75%;
-      width:fit-content;
-      margin-left:auto;
-      opacity:0;
-      animation:fadeIn 0.35s forwards;
-      font-weight:600;
-    }
+  .user-msg{
+    background:#00ffa0;
+    color:#04120a;
+    padding:10px 14px;
+    border-radius:10px;
+    max-width:75%;
+    margin-left:auto;
+    animation:fadeIn 0.35s forwards;
+    font-weight:600;
+  }
 
-    .typing-bubble{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      background:rgba(255,255,255,0.10);
-      padding:10px 14px;
-      border-radius:10px;
-      width:fit-content;
-      opacity:0.85;
-      font-size:14px;
-      color:#bdbdbd;
-    }
+  @keyframes fadeIn{
+    from{opacity:0}
+    to{opacity:1}
+  }
 
-    .typing-dots span{
-      height:6px;
-      width:6px;
-      background:#00ffa0;
-      border-radius:50%;
-      display:inline-block;
-      margin-right:4px;
-      animation:blink 1.4s infinite ease-in-out both;
-    }
+  .controls{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+  }
 
-    .typing-dots span:nth-child(2){ animation-delay:.2s }
-    .typing-dots span:nth-child(3){ animation-delay:.4s }
+  textarea#userInput{
+    flex:1;
+    min-height:80px;
+    border-radius:10px;
+    padding:12px;
+    border:1px solid rgba(255,255,255,0.04);
+    background:transparent;
+    color:#fff;
+    resize:vertical;
+  }
 
-    @keyframes blink{
-      0%{opacity:.2}
-      20%{opacity:1}
-      100%{opacity:.2}
-    }
+  button#sendBtn, button#endBtn{
+    padding:12px 18px;
+    border-radius:10px;
+    font-weight:700;
+    cursor:pointer;
+  }
 
-    @keyframes fadeIn{
-      from{opacity:0}
-      to{opacity:1}
-    }
+  #sendBtn{
+    background:var(--neon);
+    color:#04120a;
+    border:0;
+  }
 
-    .controls{
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-    }
+  #endBtn{
+    background:#111;
+    color:#fff;
+    border:1px solid rgba(255,255,255,0.08);
+    margin-left:8px;
+  }
 
-    textarea#userInput{
-      flex:1;
-      min-height:80px;
-      border-radius:10px;
-      padding:12px;
-      border:1px solid rgba(255,255,255,0.04);
-      background:transparent;
-      color:#fff;
-      resize:vertical;
-    }
-
-    button#sendBtn{
-      background:var(--neon);
-      color:#04120a;
-      border:0;
-      padding:12px 18px;
-      border-radius:10px;
-      font-weight:700;
-      cursor:pointer;
-    }
-
-  
-
-    .meta-note{
-      font-size:13px;
-      color:rgba(255,255,255,0.55);
-      margin-top:6px;
-    }
-  </style>
+  .meta-note{
+    font-size:13px;
+    color:rgba(255,255,255,0.55);
+    margin-top:6px;
+  }
+</style>
 </head>
 
 <body>
@@ -238,22 +211,34 @@
         <textarea id="userInput" placeholder="Type your message here..."></textarea>
         <div style="display:flex;flex-direction:column;gap:8px">
           <button id="sendBtn">Send</button>
-          <button id="endBtn" style="
-  background:#111;
-  color:#fff;
-  border:1px solid rgba(255,255,255,0.08);
-  padding:10px 14px;
-  border-radius:10px;
-  font-weight:700;
-  cursor:pointer;
-  margin-left:8px;
-">End Session</button>
+          <button id="endBtn">End Session</button>
         </div>
       </div>
 
-      <div class="meta-note" id="infoNote">Response style adapts to your mood.</div>
+      <div class="meta-note">Response style adapts to your mood.</div>
     </div>
   </div>
+
+<!-- SESSION MODAL -->
+<div id="sessionModal" style="
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);z-index:9999;">
+  <div style="
+    width:90%;max-width:520px;background:rgba(10,10,10,0.98);
+    border-radius:14px;padding:28px;text-align:center;
+    border:1px solid rgba(255,255,255,0.04);box-shadow:0 20px 60px rgba(0,0,0,0.6);
+  ">
+    <div style="font-size:46px;color:#00ffa0;margin-bottom:6px;">✔</div>
+    <h2 style="margin:0 0 8px;color:#00ffa0;">Session complete</h2>
+    <p id="reflectionText" style="color:rgba(255,255,255,0.9);margin:12px 0;font-size:16px;line-height:1.4"></p>
+    <p style="opacity:0.7;margin:10px 0;">
+      See you tomorrow, for fixing and handling your mood tantrums. <br>
+      Your personal mood assistant Sylvia ❤️
+    </p>
+    <p id="redirectNote" style="opacity:0.6;margin-top:8px;">Returning to home in 20s…</p>
+  </div>
+</div>
 
 <script>
 /* ========= Mood handling ========= */
@@ -276,8 +261,6 @@ document.getElementById('moodTitle').textContent = MOOD_MAP[moodParam]?.label ||
 document.getElementById('moodScore').textContent = `Confidence: ${scoreParam || "—"}%`;
 
 /* ========= Chat logic ========= */
-
-// ======== MEMORY SYSTEM ========
 let chatHistory = [];
 
 const chatLog = document.getElementById('chatLog');
@@ -287,8 +270,6 @@ const sendBtn = document.getElementById('sendBtn');
 function autoScroll(){
   chatLog.scrollTop = chatLog.scrollHeight;
 }
-
-let typingBubble = null;
 
 function appendAI(text){
   const msg = document.createElement('div');
@@ -306,163 +287,107 @@ function appendUser(text){
   autoScroll();
 }
 
-function showTyping(){
-  typingBubble = document.createElement('div');
-  typingBubble.className = 'typing-bubble';
-  typingBubble.innerHTML = `
-    AI is typing
-    <div class="typing-dots">
-      <span></span><span></span><span></span>
-    </div>
-  `;
-  chatLog.appendChild(typingBubble);
-  autoScroll();
-}
-
-function hideTyping(){
-  if (typingBubble){
-    typingBubble.remove();
-    typingBubble = null;
-    autoScroll();
-  }
-}
-
-/* ========= Backend call ========= */
-const BACKEND_URL = "/api/chat";
-
 async function sendMessage(){
   const text = userInput.value.trim();
   if (!text) return;
 
   appendUser(text);
 
-  // Save user message in memory
-  chatHistory.push({
-    role: "user",
-    content: text
-  });
+  chatHistory.push({ role:"user", content:text });
 
   userInput.value = "";
   sendBtn.disabled = true;
 
-  showTyping();
-
   try{
-    const res = await fetch(BACKEND_URL, {
+    const res = await fetch("/api/chat", {
       method:"POST",
       headers:{ "Content-Type":"application/json" },
       body:JSON.stringify({ 
-        userMessage: text,
-        mood: moodParam,
-        history: chatHistory
+        userMessage:text,
+        mood:moodParam,
+        history:chatHistory
       })
     });
 
     const data = await res.json();
-    hideTyping();
-
     const reply = data.reply || "Something went wrong.";
+
     appendAI(reply);
 
-    // Save AI reply in memory
-    chatHistory.push({
-      role: "assistant",
-      content: reply
-    });
-  }
-  catch(err){
-    hideTyping();
+    chatHistory.push({ role:"assistant", content:reply });
+
+  } catch(err){
     appendAI("Network error. Please try again.");
   }
-  finally{
-    sendBtn.disabled = false;
-  }
+
+  sendBtn.disabled = false;
 }
-  // END SESSION logic
+
+/* ========= END SESSION ========= */
 const endBtn = document.getElementById("endBtn");
 const sessionModal = document.getElementById("sessionModal");
 const reflectionText = document.getElementById("reflectionText");
 const redirectNote = document.getElementById("redirectNote");
 
 endBtn.addEventListener("click", async () => {
-  // if no meaningful history, fallback immediately
-  if (!chatHistory || chatHistory.length < 2) {
+
+  // no history?
+  if (chatHistory.length < 2) {
     reflectionText.textContent = "You made space for yourself today. Small steps matter.";
     sessionModal.style.display = "flex";
-    startRedirectCountdown(4);
+    startRedirectCountdown(19);
     return;
   }
 
-  // show modal while fetching
   reflectionText.textContent = "Thinking about our conversation…";
-  redirectNote.textContent = "Returning to home in 20s…";
   sessionModal.style.display = "flex";
 
   try {
     const resp = await fetch("/api/session-summary", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ history: chatHistory })
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body:JSON.stringify({ history:chatHistory })
     });
+
     const data = await resp.json();
-    reflectionText.textContent = (data && data.summary) ? data.summary : "You held more calm than you might realise today.";
-  } catch (err) {
-    console.error("Session summary fetch failed:", err);
+
+    reflectionText.textContent =
+      data.summary || "You held more calm than you realize today.";
+
+  } catch(e){
     reflectionText.textContent = "You made space for yourself. Take that calm forward.";
   }
 
   startRedirectCountdown(20);
 });
 
-function startRedirectCountdown(seconds) {
-  let s = seconds;
+function startRedirectCountdown(s){
   redirectNote.textContent = `Returning to home in ${s}s…`;
-  const t = setInterval(()=> {
+
+  const timer = setInterval(()=>{
     s--;
     redirectNote.textContent = `Returning to home in ${s}s…`;
-    if (s <= 0) {
-      clearInterval(t);
+
+    if (s <= 0){
+      clearInterval(timer);
       window.location.href = "index.html";
     }
   }, 1000);
 }
 
-/* ========= Enter Keybind ========= */
+/* ========= Keybind ========= */
 sendBtn.addEventListener("click", sendMessage);
 
 userInput.addEventListener("keydown", (e)=>{
-  if (e.key === "Enter") {
-    if (e.shiftKey) return;
+  if (e.key === "Enter" && !e.shiftKey){
     e.preventDefault();
     sendMessage();
   }
 });
-  <!-- Session complete modal -->
-<div id="sessionModal" style="
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  display:none;align-items:center;justify-content:center;
-  background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);z-index:9999;">
-  <div style="
-    width:90%;max-width:520px;background:rgba(10,10,10,0.98);
-    border-radius:14px;padding:28px;text-align:center;
-    border:1px solid rgba(255,255,255,0.04);box-shadow:0 20px 60px rgba(0,0,0,0.6);
-  ">
-    <div style="font-size:46px;color:#00ffa0;margin-bottom:6px;">✔</div>
-    <h2 style="margin:0 0 8px;color:#00ffa0;">Session complete</h2>
-    <p id="reflectionText" style="color:rgba(255,255,255,0.9);margin:12px 0;font-size:16px;line-height:1.4"></p>
-    <p style="opacity:0.7;margin:10px 0;">
-      See you tomorrow, for fixing and handling your mood tantrums. <br>
-           Your personal mood assistant Sylvia.❤️
-    </p>
-    <p id="redirectNote" style="opacity:0.6;margin-top:8px;">Returning to home in 20s…</p>
-  </div>
-</div>
 
-
-/* ========= First message ========= */
+/* ========= First Message ========= */
 appendAI("Hi — I’m Sylvia. Tell me what’s on your mind");
 </script>
+
 </body>
 </html>
-
-
