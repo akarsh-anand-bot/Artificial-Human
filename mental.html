@@ -265,6 +265,10 @@ document.getElementById('moodTitle').textContent = MOOD_MAP[moodParam]?.label ||
 document.getElementById('moodScore').textContent = `Confidence: ${scoreParam || "—"}%`;
 
 /* ========= Chat logic ========= */
+
+// ======== MEMORY SYSTEM ========
+let chatHistory = [];
+
 const chatLog = document.getElementById('chatLog');
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
@@ -320,6 +324,13 @@ async function sendMessage(){
   if (!text) return;
 
   appendUser(text);
+
+  // Save user message in memory
+  chatHistory.push({
+    role: "user",
+    content: text
+  });
+
   userInput.value = "";
   sendBtn.disabled = true;
 
@@ -329,13 +340,24 @@ async function sendMessage(){
     const res = await fetch(BACKEND_URL, {
       method:"POST",
       headers:{ "Content-Type":"application/json" },
-      body:JSON.stringify({ userMessage:text, mood:moodParam })
+      body:JSON.stringify({ 
+        userMessage: text,
+        mood: moodParam,
+        history: chatHistory
+      })
     });
 
     const data = await res.json();
     hideTyping();
 
-    appendAI(data.reply || "Something went wrong.");
+    const reply = data.reply || "Something went wrong.";
+    appendAI(reply);
+
+    // Save AI reply in memory
+    chatHistory.push({
+      role: "assistant",
+      content: reply
+    });
   }
   catch(err){
     hideTyping();
@@ -346,12 +368,12 @@ async function sendMessage(){
   }
 }
 
-/* ========= Enter Keybind (final) ========= */
+/* ========= Enter Keybind ========= */
 sendBtn.addEventListener("click", sendMessage);
 
 userInput.addEventListener("keydown", (e)=>{
   if (e.key === "Enter") {
-    if (e.shiftKey) return; // newline
+    if (e.shiftKey) return;
     e.preventDefault();
     sendMessage();
   }
@@ -362,4 +384,3 @@ appendAI("Hi — I’m Sylvia. Tell me what’s on your mind");
 </script>
 </body>
 </html>
-
