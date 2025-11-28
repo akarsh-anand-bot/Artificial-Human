@@ -232,7 +232,7 @@
       <br>Your personal mood assistant Sylvia ❤️
     </p>
 
-    <p id="redirectNote" style="opacity:.6;">Returning in 20s…</p>
+    <p id="redirectNote" style="opacity:.6;">Returning to homepage in 20s…</p>
   </div>
 </div>
 
@@ -373,10 +373,10 @@ endBtn.addEventListener("click", async () => {
 });
 
 function startRedirectCountdown(s){
-  redirectNote.textContent = `Returning in ${s}s…`;
+  redirectNote.textContent = `Returning to home page in ${s}s…`;
   const timer = setInterval(()=>{
     s--;
-    redirectNote.textContent = `Returning in ${s}s…`;
+    redirectNote.textContent = `Returning to home page in ${s}s…`;
     if (s <= 0){
       clearInterval(timer);
       window.location.href = "index.html";
@@ -400,3 +400,4 @@ appendAI("Hi — I’m Sylvia. Tell me what's on your mind.");
 
 </body>
 </html>
+
