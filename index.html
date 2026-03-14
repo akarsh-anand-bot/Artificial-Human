@@ -5,8 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Artificial Human</title>
 <link rel="icon" type="image/png" href="icon.png">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
+
+<!-- Neural background libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-9T45FS7BXJ"></script>
 <script>
@@ -23,6 +26,7 @@ gtag('config', 'G-9T45FS7BXJ');
 <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
 <style>
+
 :root{
 --bg:#0b0b0b;
 --neon:#0aff9d;
@@ -39,20 +43,7 @@ color:#fff;
 overflow-x:hidden;
 }
 
-/* HERO */
-.hero{
-padding:70px 20px 40px;
-text-align:center;
-background: radial-gradient(circle at 50% -20%, rgba(10,255,150,0.08), transparent 60%);
-}
-
-.brand-logo{
-height:90px;
-width:auto;
-margin-bottom:16px;
-filter:drop-shadow(0 0 14px rgba(10,255,150,0.25));
-}
-
+/* Neural background container */
 #ai-bg{
 position:fixed;
 top:0;
@@ -60,6 +51,37 @@ left:0;
 width:100%;
 height:100vh;
 z-index:0;
+}
+
+/* glow behind hero so title readable */
+body::before{
+content:"";
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:radial-gradient(circle at 50% 20%, rgba(10,255,157,0.15), transparent 60%);
+pointer-events:none;
+z-index:1;
+}
+
+/* ensure site content above network */
+.hero,.slider,.card,footer{
+position:relative;
+z-index:2;
+}
+
+/* ---- HERO ---- */
+.hero{
+padding:70px 20px 40px;
+text-align:center;
+}
+
+.brand-logo{
+height:90px;
+margin-bottom:16px;
+filter:drop-shadow(0 0 14px rgba(10,255,150,0.25));
 }
 
 .title{
@@ -103,16 +125,10 @@ text-align:center;
 color:var(--neon);
 text-decoration:none;
 opacity:0.85;
-transition: opacity .2s ease, transform .2s ease;
 }
 
-.about-link:hover{
-opacity:1;
-transform:translateY(-2px);
-text-shadow:0 0 8px rgba(10,255,150,0.4);
-}
+/* ---- Slider ---- */
 
-/* Slider */
 .slider{
 margin:60px auto 30px;
 width:92%;
@@ -120,9 +136,9 @@ max-width:900px;
 aspect-ratio:16/9;
 border-radius:18px;
 overflow:hidden;
-position:relative;
 background:linear-gradient(180deg,#090909,#111);
 box-shadow:0 30px 80px rgba(0,0,0,0.7);
+position:relative;
 }
 
 .slides,.slide{width:100%;height:100%;}
@@ -146,20 +162,15 @@ z-index:2;
 width:100%;
 height:100%;
 object-fit:cover;
-filter:contrast(.95) saturate(.95);
-transform:scale(1.03);
-transition:transform 1.2s ease;
 }
-
-.slide.show img{transform:scale(1);}
 
 .controls{
 position:absolute;
 bottom:20px;
-left:0;right:0;
+left:0;
+right:0;
 display:flex;
 justify-content:center;
-align-items:center;
 gap:16px;
 }
 
@@ -167,14 +178,15 @@ gap:16px;
 width:44px;height:44px;
 border-radius:10px;
 background:rgba(255,255,255,0.04);
-border:1px solid rgba(255,255,255,0.1);
 display:flex;
 align-items:center;
 justify-content:center;
 cursor:pointer;
 }
 
-.arrow svg{width:18px;height:18px;fill:#fff;}
+.arrow svg{
+width:18px;height:18px;fill:#fff;
+}
 
 .dots{display:flex;gap:12px;}
 
@@ -187,10 +199,10 @@ cursor:pointer;
 
 .dot.active{
 background:var(--neon);
-box-shadow:0 0 18px rgba(10,255,150,0.3);
 }
 
-/* Camera */
+/* ---- CAMERA ---- */
+
 .card{
 margin-top:40px;
 display:flex;
@@ -214,79 +226,9 @@ video#video{
 width:100%;
 height:100%;
 object-fit:cover;
-border-radius:16px;
 }
 
-.scan-ring{position:absolute;inset:5%;border-radius:18px;}
-
-.ring-inner,.ring-outer{
-position:absolute;
-inset:0;
-border-radius:inherit;
-box-shadow:0 0 0 1px rgba(10,255,150,0.07) inset;
-}
-
-.ring-outer::after{
-content:"";
-position:absolute;
-inset:-6%;
-border-radius:inherit;
-border:2px dashed rgba(10,255,150,0.08);
-animation:spinSlow 6s linear infinite;
-}
-
-@keyframes spinSlow{
-from{transform:rotate(0)}
-to{transform:rotate(360deg)}
-}
-
-.sweep{
-position:absolute;
-top:0;
-left:-40%;
-height:100%;
-width:40%;
-background:linear-gradient(90deg,rgba(10,255,150,0) 0%,rgba(10,255,150,0.05) 50%,rgba(10,255,150,0) 100%);
-transform:skewX(-12deg);
-animation:sweep 2s linear infinite;
-mix-blend-mode:screen;
-}
-
-@keyframes sweep{
-0%{left:-40%}
-100%{left:120%}
-}
-
-.mood-text{
-font-size:22px;
-color:#d7ffe9;
-padding:10px 16px;
-}
-
-.mood-actions{
-margin-top:14px;
-display:flex;
-gap:14px;
-}
-
-.accept,.retry{
-padding:10px 20px;
-border-radius:12px;
-font-weight:600;
-cursor:pointer;
-border:none;
-}
-
-.accept{
-background:var(--neon);
-color:#04120a;
-}
-
-.retry{
-background:transparent;
-border:1px solid rgba(255,255,255,0.2);
-color:#fff;
-}
+/* ---- FOOTER ---- */
 
 footer{
 width:100%;
@@ -295,7 +237,6 @@ margin-top:80px;
 padding:32px 12px;
 text-align:center;
 border-top:1px solid rgba(255,255,255,0.05);
-opacity:0.9;
 }
 
 footer p{
@@ -304,10 +245,6 @@ font-size:15px;
 color:rgba(255,255,255,0.7);
 }
 
-@media(max-width:600px){
-.title{font-size:32px;}
-.subtitle{font-size:15px;}
-}
 </style>
 </head>
 
@@ -317,8 +254,11 @@ color:rgba(255,255,255,0.7);
 
 <!-- HERO -->
 <div class="hero">
+
 <img src="icon.png" class="brand-logo">
+
 <div class="title">ARTIFICIAL HUMAN</div>
+
 <div class="subtitle">An introduction to — Sylvia AI</div>
 
 <div class="subtitle">
@@ -328,6 +268,7 @@ or nostalgic soundtracks tailored to your emotional state.
 </div>
 
 <button class="btn" id="startBtn">Start Camera</button>
+
 </div>
 
 <a href="about.html" class="about-link">Learn more about Sylvia →</a>
@@ -353,12 +294,6 @@ or nostalgic soundtracks tailored to your emotional state.
 <div class="card">
 <div class="cam-wrap" id="camWrap">
 <video id="video" autoplay muted playsinline></video>
-
-<div class="scan-ring">
-<div class="ring-inner"></div>
-<div class="ring-outer"></div>
-<div class="sweep"></div>
-</div>
 </div>
 
 <div class="mood-bar">
@@ -376,195 +311,22 @@ or nostalgic soundtracks tailored to your emotional state.
 <p>© 2026 Artificial Human — All Rights Reserved</p>
 </footer>
 
-<!-- Background Libraries -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
-
 <script>
 
-/* VANTA BACKGROUND */
+/* Neural background */
+
 window.addEventListener("DOMContentLoaded",()=>{
 VANTA.NET({
 el:"#ai-bg",
 color:0x0aff9d,
 backgroundColor:0x0b0b0b,
-points:12,
-maxDistance:22,
-spacing:18
+points:8,
+maxDistance:18,
+spacing:22
 });
 });
 
-/* ===== SLIDER ===== */
-const images=[
-"https://images.unsplash.com/photo-1694903110330-cc64b7e1d21d?q=80&w=1932&auto=format&fit=crop",
-"https://plus.unsplash.com/premium_photo-1683121718643-fb18d2668d53?q=80&w=1332&auto=format&fit=crop",
-"https://plus.unsplash.com/premium_photo-1690297853326-e127726588ac?q=80&w=1332&auto=format&fit=crop"
-];
-
-const slidesEl=document.getElementById('slides');
-const dotsEl=document.getElementById('dots');
-let current=0,slideNodes=[];
-
-images.forEach((src,i)=>{
-const s=document.createElement('div');s.className='slide';
-const img=document.createElement('img');
-img.dataset.src=src;
-s.appendChild(img);
-slidesEl.appendChild(s);
-
-const d=document.createElement('div');d.className='dot';
-d.addEventListener('click',()=>goTo(i));
-dotsEl.appendChild(d);
-
-const p=new Image();
-p.onload=()=>{img.src=p.src;if(i===0){s.classList.add('show');d.classList.add('active');}};
-p.src=src;
-slideNodes.push(s);
-});
-
-function refreshDots(){
-Array.from(dotsEl.children).forEach((dot,idx)=>dot.classList.toggle('active',idx===current));
-}
-function showCurrent(){
-slideNodes.forEach((s,idx)=>s.classList.toggle('show',idx===current));
-refreshDots();
-}
-function next(){current=(current+1)%slideNodes.length;showCurrent();}
-function prev(){current=(current-1+slideNodes.length)%slideNodes.length;showCurrent();}
-function goTo(n){current=n;showCurrent();}
-document.getElementById('nextBtn').addEventListener('click',next);
-document.getElementById('prevBtn').addEventListener('click',prev);
-
-let sliderInterval=setInterval(next,4200);
-document.getElementById('sliderRoot').addEventListener('mouseenter',()=>clearInterval(sliderInterval));
-document.getElementById('sliderRoot').addEventListener('mouseleave',()=>sliderInterval=setInterval(next,4200));
-
-/* CAMERA */
-const MODEL_URL='./models';
-const startBtn=document.getElementById('startBtn');
-const video=document.getElementById('video');
-const moodText=document.getElementById('moodText');
-const moodActions=document.getElementById('moodActions');
-const acceptBtn=document.getElementById('acceptBtn');
-const retryBtn=document.getElementById('retryBtn');
-
-let detectInterval=null;
-let lastDetected=null;
-
-startBtn.addEventListener('click',startCamera);
-
-async function loadModels(){
-try{
-await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
-await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
-return true;
-}catch(e){
-moodText.innerText='Model load failed';
-return false;
-}
-}
-
-async function startCamera(){
-startBtn.disabled=true;
-moodText.innerText='Preparing camera and models...';
-
-const ok=await loadModels();
-if(!ok){startBtn.disabled=false;return;}
-
-try{
-const stream=await navigator.mediaDevices.getUserMedia({video:{width:640,height:480},audio:false});
-video.srcObject=stream;
-await video.play();
-
-moodText.innerText='Detecting mood...';
-
-document.getElementById("camWrap").scrollIntoView({
-behavior:"smooth",
-block:"center"
-});
-
-runDetectionLoop();
-}catch(err){
-moodText.innerText='Camera error';
-startBtn.disabled=false;
-}
-}
-
-function runDetectionLoop(){
-if(detectInterval)clearInterval(detectInterval);
-detectInterval=setInterval(()=>detectMood(),450);
-}
-
-async function detectMood(){
-if(!video||video.readyState<2)return;
-
-try{
-const result=await faceapi.detectSingleFace(video,new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
-if(!result){
-moodText.innerText='No face detected — look at camera.';
-return;
-}
-
-const exps=result.expressions;
-const pairs=Object.entries(exps).sort((a,b)=>b[1]-a[1]);
-const[label,score]=pairs[0];
-
-moodText.innerText=`Detected: ${label.toUpperCase()} — ${(score*100).toFixed(0)}%`;
-
-if(score>=0.55){
-clearInterval(detectInterval);
-detectInterval=null;
-lastDetected={label,score};
-showConfirmUI(label,score);
-}
-
-}catch(e){}
-}
-
-function showConfirmUI(label,score){
-moodText.innerText=`FINAL: ${label.toUpperCase()} — ${(score*100).toFixed(0)}%`;
-moodActions.style.display='flex';
-}
-
-acceptBtn.addEventListener('click',()=>{
-if(!lastDetected)return;
-
-const mood=lastDetected.label.toLowerCase();
-const score=(lastDetected.score*100).toFixed(0);
-
-moodActions.style.display='none';
-moodText.innerText=`LOCKED: ${mood.toUpperCase()}`;
-
-document.body.style.transition="opacity 0.7s ease";
-document.body.style.opacity="0";
-
-setTimeout(()=>{
-window.location.href=`assist.html?mood=${mood}&score=${score}`;
-},800);
-});
-
-retryBtn.addEventListener('click',()=>{
-lastDetected=null;
-moodActions.style.display='none';
-moodText.innerText='Retrying detection...';
-setTimeout(()=>runDetectionLoop(),600);
-});
-
-window.addEventListener('beforeunload',()=>{
-try{
-if(video&&video.srcObject)
-video.srcObject.getTracks().forEach(t=>t.stop());
-}catch(e){}
-});
 </script>
+
 </body>
 </html>
-
-
-
-
-
-
-
-
-
