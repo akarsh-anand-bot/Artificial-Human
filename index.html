@@ -52,6 +52,7 @@ left:0;
 width:100%;
 height:100%;
 z-index:0;
+ pointer-events:none;
 }
 /* ---- HERO SECTION ---- */
 
@@ -684,21 +685,21 @@ window.addEventListener("load", function() {
 
 particlesJS("particles-js", {
   particles: {
-    number: { value: 80 },
+    number: { value: 120 },
     color: { value: "#00ffa6" },
     shape: { type: "circle" },
     opacity: { value: 0.6 },
     size: { value: 3 },
     line_linked: {
       enable: true,
-      distance: 150,
+      distance: 180,
       color: "#00ffa6",
       opacity: 0.4,
       width: 1
     },
     move: {
       enable: true,
-      speed: 2
+      speed: 3
     }
   }
 });
