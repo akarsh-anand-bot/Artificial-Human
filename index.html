@@ -5,548 +5,559 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Artificial Human</title>
 <link rel="icon" type="image/png" href="icon.png">
+
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-9T45FS7BXJ"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-9T45FS7BXJ');
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-9T45FS7BXJ');
 </script>
-<!-- End Google Analytics -->
+
 <!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
 
-<!-- face-api.js -->
+<!-- face-api -->
 <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
 <style>
 :root{
-  --bg:#0b0b0b;
-  --neon:#0aff9d;
-  --glass: rgba(255,255,255,0.03);
-  --muted: rgba(255,255,255,0.12);
+--bg:#0b0b0b;
+--neon:#0aff9d;
+--glass: rgba(255,255,255,0.03);
+--muted: rgba(255,255,255,0.12);
 }
 
 html,body{
-  margin:0;
-  padding:0;
-  background:var(--bg);
-  font-family:'Poppins',sans-serif;
-  color:#fff;
-  overflow-x:hidden;
+margin:0;
+padding:0;
+background:var(--bg);
+font-family:'Poppins',sans-serif;
+color:#fff;
+overflow-x:hidden;
 }
 
-/* ---- HERO SECTION ---- */
+/* HERO */
 .hero{
-  padding:70px 20px 40px;
-  text-align:center;
-  background: radial-gradient(circle at 50% -20%, rgba(10,255,150,0.08), transparent 60%);
+padding:70px 20px 40px;
+text-align:center;
+background: radial-gradient(circle at 50% -20%, rgba(10,255,150,0.08), transparent 60%);
 }
 
 .brand-logo{
-  height:90px;
-  width:auto;
-  margin-bottom:16px;
-  filter:drop-shadow(0 0 14px rgba(10,255,150,0.25));
+height:90px;
+width:auto;
+margin-bottom:16px;
+filter:drop-shadow(0 0 14px rgba(10,255,150,0.25));
+}
+
+#ai-bg{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100vh;
+z-index:-1;
 }
 
 .title{
-  font-weight:800;
-  font-size:50px;
-  letter-spacing:2px;
-  margin:0 0 10px;
+font-weight:800;
+font-size:50px;
+letter-spacing:2px;
+margin:0 0 10px;
 }
 
 .subtitle{
-  font-size:18px;
-  max-width:780px;
-  margin:0 auto 22px;
-  color:rgba(255,255,255,0.8);
-  line-height:1.6;
+font-size:18px;
+max-width:780px;
+margin:0 auto 22px;
+color:rgba(255,255,255,0.8);
+line-height:1.6;
 }
 
 .btn{
-  background:var(--neon);
-  color:#04120a;
-  border:0;
-  padding:16px 40px;
-  border-radius:14px;
-  font-weight:600;
-  font-size:19px;
-  cursor:pointer;
-  box-shadow:0 10px 30px rgba(0,255,170,0.12);
-  transition:transform .2s, box-shadow .2s;
+background:var(--neon);
+color:#04120a;
+border:0;
+padding:16px 40px;
+border-radius:14px;
+font-weight:600;
+font-size:19px;
+cursor:pointer;
+box-shadow:0 10px 30px rgba(0,255,170,0.12);
+transition:transform .2s, box-shadow .2s;
 }
 
 .btn:hover{
-  transform:translateY(-4px);
-  box-shadow:0 10px 34px rgba(0,255,170,0.18);
-}
-  .about-link {
-  display: block;
-  margin-top: 18px;
-  font-size: 17px;
-  text-align: center;
-  color: var(--neon);
-  text-decoration: none;
-  opacity: 0.85;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+transform:translateY(-4px);
+box-shadow:0 10px 34px rgba(0,255,170,0.18);
 }
 
-.about-link:hover {
-  opacity: 1;
-  transform: translateY(-2px);
-  text-shadow: 0 0 8px rgba(10,255,150,0.4);
+.about-link{
+display:block;
+margin-top:18px;
+font-size:17px;
+text-align:center;
+color:var(--neon);
+text-decoration:none;
+opacity:0.85;
+transition: opacity .2s ease, transform .2s ease;
 }
 
-/* ---- Slider ---- */
+.about-link:hover{
+opacity:1;
+transform:translateY(-2px);
+text-shadow:0 0 8px rgba(10,255,150,0.4);
+}
+
+/* Slider */
 .slider{
-  margin:60px auto 30px;
-  width:92%;
-  max-width:900px;
-  aspect-ratio:16/9;
-  border-radius:18px;
-  overflow:hidden;
-  position:relative;
-  background:linear-gradient(180deg,#090909,#111);
-  box-shadow:0 30px 80px rgba(0,0,0,0.7);
+margin:60px auto 30px;
+width:92%;
+max-width:900px;
+aspect-ratio:16/9;
+border-radius:18px;
+overflow:hidden;
+position:relative;
+background:linear-gradient(180deg,#090909,#111);
+box-shadow:0 30px 80px rgba(0,0,0,0.7);
 }
 
-/* Slides */
-.slides, .slide{
-  width:100%; height:100%;
-}
+.slides,.slide{width:100%;height:100%;}
 
 .slide{
-  position:absolute;
-  inset:0;
-  opacity:0;
-  transition:opacity .7s ease;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+position:absolute;
+inset:0;
+opacity:0;
+transition:opacity .7s ease;
+display:flex;
+align-items:center;
+justify-content:center;
 }
 
 .slide.show{
-  opacity:1;
-  z-index:2;
+opacity:1;
+z-index:2;
 }
 
 .slide img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  filter:contrast(.95) saturate(.95);
-  transform:scale(1.03);
-  transition:transform 1.2s ease;
+width:100%;
+height:100%;
+object-fit:cover;
+filter:contrast(.95) saturate(.95);
+transform:scale(1.03);
+transition:transform 1.2s ease;
 }
 
-.slide.show img{
-  transform:scale(1);
-}
+.slide.show img{transform:scale(1);}
 
-/* Slider controls */
 .controls{
-  position:absolute;
-  bottom:20px;
-  left:0; right:0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:16px;
+position:absolute;
+bottom:20px;
+left:0;right:0;
+display:flex;
+justify-content:center;
+align-items:center;
+gap:16px;
 }
 
 .arrow{
-  width:44px; height:44px;
-  border-radius:10px;
-  background:rgba(255,255,255,0.04);
-  border:1px solid rgba(255,255,255,0.1);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
+width:44px;height:44px;
+border-radius:10px;
+background:rgba(255,255,255,0.04);
+border:1px solid rgba(255,255,255,0.1);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
 }
 
-.arrow svg{
-  width:18px;
-  height:18px;
-  fill:#fff;
-}
+.arrow svg{width:18px;height:18px;fill:#fff;}
 
-.dots{
-  display:flex;
-  gap:12px;
-}
+.dots{display:flex;gap:12px;}
 
 .dot{
-  width:11px; height:11px;
-  border-radius:50px;
-  background:rgba(255,255,255,0.25);
-  cursor:pointer;
+width:11px;height:11px;
+border-radius:50px;
+background:rgba(255,255,255,0.25);
+cursor:pointer;
 }
 
 .dot.active{
-  background:var(--neon);
-  box-shadow:0 0 18px rgba(10,255,150,0.3);
+background:var(--neon);
+box-shadow:0 0 18px rgba(10,255,150,0.3);
 }
 
-/* ---- CAMERA CARD ---- */
+/* Camera */
 .card{
-  margin-top:40px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:28px;
+margin-top:40px;
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:28px;
 }
 
 .cam-wrap{
-  position:relative;
-  width:100%;
-  max-width:480px;
-  aspect-ratio:4/3;
-  border-radius:16px;
-  background:var(--glass);
-  overflow:hidden;
-  box-shadow:0 35px 65px rgba(0,0,0,0.7);
+position:relative;
+width:100%;
+max-width:480px;
+aspect-ratio:4/3;
+border-radius:16px;
+background:var(--glass);
+overflow:hidden;
+box-shadow:0 35px 65px rgba(0,0,0,0.7);
 }
 
 video#video{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  border-radius:16px;
+width:100%;
+height:100%;
+object-fit:cover;
+border-radius:16px;
 }
 
-.scan-ring{
-  position:absolute;
-  inset:5%;
-  border-radius:18px;
-}
+.scan-ring{position:absolute;inset:5%;border-radius:18px;}
 
-.ring-inner, .ring-outer{
-  position:absolute;
-  inset:0;
-  border-radius:inherit;
-  box-shadow:0 0 0 1px rgba(10,255,150,0.07) inset;
+.ring-inner,.ring-outer{
+position:absolute;
+inset:0;
+border-radius:inherit;
+box-shadow:0 0 0 1px rgba(10,255,150,0.07) inset;
 }
 
 .ring-outer::after{
-  content:"";
-  position:absolute;
-  inset:-6%;
-  border-radius:inherit;
-  border:2px dashed rgba(10,255,150,0.08);
-  animation:spinSlow 6s linear infinite;
+content:"";
+position:absolute;
+inset:-6%;
+border-radius:inherit;
+border:2px dashed rgba(10,255,150,0.08);
+animation:spinSlow 6s linear infinite;
 }
 
 @keyframes spinSlow{
-  from{transform:rotate(0)}
-  to{transform:rotate(360deg)}
+from{transform:rotate(0)}
+to{transform:rotate(360deg)}
 }
 
 .sweep{
-  position:absolute;
-  top:0;
-  left:-40%;
-  height:100%; width:40%;
-  background:linear-gradient(90deg,rgba(10,255,150,0) 0%,rgba(10,255,150,0.05) 50%,rgba(10,255,150,0) 100%);
-  transform:skewX(-12deg);
-  animation:sweep 2s linear infinite;
-  mix-blend-mode:screen;
+position:absolute;
+top:0;
+left:-40%;
+height:100%;
+width:40%;
+background:linear-gradient(90deg,rgba(10,255,150,0) 0%,rgba(10,255,150,0.05) 50%,rgba(10,255,150,0) 100%);
+transform:skewX(-12deg);
+animation:sweep 2s linear infinite;
+mix-blend-mode:screen;
 }
 
 @keyframes sweep{
-  0%{left:-40%}
-  100%{left:120%}
+0%{left:-40%}
+100%{left:120%}
 }
 
 .mood-text{
-  font-size:22px;
-  color:#d7ffe9;
-  padding:10px 16px;
+font-size:22px;
+color:#d7ffe9;
+padding:10px 16px;
 }
 
 .mood-actions{
-  margin-top:14px;
-  display:flex;
-  gap:14px;
+margin-top:14px;
+display:flex;
+gap:14px;
 }
 
-.accept, .retry{
-  padding:10px 20px;
-  border-radius:12px;
-  font-weight:600;
-  cursor:pointer;
-  border:none;
+.accept,.retry{
+padding:10px 20px;
+border-radius:12px;
+font-weight:600;
+cursor:pointer;
+border:none;
 }
 
 .accept{
-  background:var(--neon);
-  color:#04120a;
+background:var(--neon);
+color:#04120a;
 }
 
 .retry{
-  background:transparent;
-  border:1px solid rgba(255,255,255,0.2);
-  color:#fff;
+background:transparent;
+border:1px solid rgba(255,255,255,0.2);
+color:#fff;
 }
 
-/* ---- FOOTER ---- */
 footer{
-  width:100%;
-  background:#0a0a0a;
-  margin-top:80px;
-  padding:32px 12px;
-  text-align:center;
-  border-top:1px solid rgba(255,255,255,0.05);
-  opacity:0.9;
+width:100%;
+background:#0a0a0a;
+margin-top:80px;
+padding:32px 12px;
+text-align:center;
+border-top:1px solid rgba(255,255,255,0.05);
+opacity:0.9;
 }
 
 footer p{
-  margin:6px 0;
-  font-size:15px;
-  color:rgba(255,255,255,0.7);
+margin:6px 0;
+font-size:15px;
+color:rgba(255,255,255,0.7);
 }
 
-footer:hover{ opacity:1; }
-
-/* Mobile */
 @media(max-width:600px){
-  .title{ font-size:32px; }
-  .subtitle{ font-size:15px; }
+.title{font-size:32px;}
+.subtitle{font-size:15px;}
 }
 </style>
 </head>
 
 <body>
 
+<div id="ai-bg"></div>
+
 <!-- HERO -->
 <div class="hero">
-  <img src="icon.png" class="brand-logo" alt="Logo">
+<img src="icon.png" class="brand-logo">
+<div class="title">ARTIFICIAL HUMAN</div>
+<div class="subtitle">An introduction to — Sylvia AI</div>
 
-  <div class="title">ARTIFICIAL HUMAN</div>
-
-  <div class="subtitle">An introduction to — Sylvia AI</div>
-
-  <div class="subtitle">
-  Sylvia AI is an emotion-adaptive assistant.
+<div class="subtitle">
+Sylvia AI is an emotion-adaptive assistant.
 It detects your mood via real-time facial analysis and responds with conversation, music recommendations,
 or nostalgic soundtracks tailored to your emotional state.
-  </div>
+</div>
 
-  <button class="btn" id="startBtn">Start Camera</button>
-</div> 
-  <a href="about.html" class="about-link">Learn more about Sylvia →</a>
+<button class="btn" id="startBtn">Start Camera</button>
+</div>
+
+<a href="about.html" class="about-link">Learn more about Sylvia →</a>
+
 <!-- SLIDER -->
 <div class="slider" id="sliderRoot">
-  <div class="slides" id="slides"></div>
+<div class="slides" id="slides"></div>
 
-  <div class="controls">
-    <div class="arrow" id="prevBtn">
-      <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-    </div>
-
-    <div class="dots" id="dots"></div>
-
-    <div class="arrow" id="nextBtn">
-      <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
-    </div>
-  </div>
+<div class="controls">
+<div class="arrow" id="prevBtn">
+<svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
 </div>
 
-<!-- CAMERA CARD -->
+<div class="dots" id="dots"></div>
+
+<div class="arrow" id="nextBtn">
+<svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+</div>
+</div>
+</div>
+
+<!-- CAMERA -->
 <div class="card">
-  <div class="cam-wrap" id="camWrap">
-    <video id="video" autoplay muted playsinline></video>
+<div class="cam-wrap" id="camWrap">
+<video id="video" autoplay muted playsinline></video>
 
-    <div class="scan-ring">
-      <div class="ring-inner"></div>
-      <div class="ring-outer"></div>
-      <div class="sweep"></div>
-    </div>
-  </div>
-
-  <div class="mood-bar">
-    <div class="mood-text" id="moodText">Waiting to start...</div>
-
-    <div class="mood-actions" id="moodActions" style="display:none">
-      <button class="accept" id="acceptBtn">Accept</button>
-      <button class="retry" id="retryBtn">Retry</button>
-    </div>
-  </div>
+<div class="scan-ring">
+<div class="ring-inner"></div>
+<div class="ring-outer"></div>
+<div class="sweep"></div>
+</div>
 </div>
 
-<!-- FOOTER ONLY ON HOMEPAGE -->
+<div class="mood-bar">
+<div class="mood-text" id="moodText">Waiting to start...</div>
+
+<div class="mood-actions" id="moodActions" style="display:none">
+<button class="accept" id="acceptBtn">Accept</button>
+<button class="retry" id="retryBtn">Retry</button>
+</div>
+</div>
+</div>
+
 <footer>
-  <p>👨‍💻 Built by Akarsh Anand &nbsp;|&nbsp; 🤖 Sylvia AI </p>
-  <p>© 2026 Artificial Human — All Rights Reserved</p>
+<p>👨‍💻 Built by Akarsh Anand | 🤖 Sylvia AI</p>
+<p>© 2026 Artificial Human — All Rights Reserved</p>
 </footer>
 
+<!-- Background Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+
 <script>
-/* ====== SLIDER ====== */
-const images = [
-  "https://images.unsplash.com/photo-1694903110330-cc64b7e1d21d?q=80&w=1932&auto=format&fit=crop",
-  "https://plus.unsplash.com/premium_photo-1683121718643-fb18d2668d53?q=80&w=1332&auto=format&fit=crop",
-  "https://plus.unsplash.com/premium_photo-1690297853326-e127726588ac?q=80&w=1332&auto=format&fit=crop"
+
+/* VANTA BACKGROUND */
+window.addEventListener("DOMContentLoaded",()=>{
+VANTA.NET({
+el:"#ai-bg",
+color:0x0aff9d,
+backgroundColor:0x0b0b0b,
+points:12,
+maxDistance:22,
+spacing:18
+});
+});
+
+/* ===== SLIDER ===== */
+const images=[
+"https://images.unsplash.com/photo-1694903110330-cc64b7e1d21d?q=80&w=1932&auto=format&fit=crop",
+"https://plus.unsplash.com/premium_photo-1683121718643-fb18d2668d53?q=80&w=1332&auto=format&fit=crop",
+"https://plus.unsplash.com/premium_photo-1690297853326-e127726588ac?q=80&w=1332&auto=format&fit=crop"
 ];
 
-const slidesEl = document.getElementById('slides');
-const dotsEl = document.getElementById('dots');
-let current = 0, slideNodes=[];
+const slidesEl=document.getElementById('slides');
+const dotsEl=document.getElementById('dots');
+let current=0,slideNodes=[];
 
 images.forEach((src,i)=>{
-  const s = document.createElement('div'); s.className='slide';
-  const img = document.createElement('img');
-  img.dataset.src = src;
-  s.appendChild(img);
-  slidesEl.appendChild(s);
+const s=document.createElement('div');s.className='slide';
+const img=document.createElement('img');
+img.dataset.src=src;
+s.appendChild(img);
+slidesEl.appendChild(s);
 
-  const d = document.createElement('div'); d.className='dot';
-  d.addEventListener('click', ()=>goTo(i));
-  dotsEl.appendChild(d);
+const d=document.createElement('div');d.className='dot';
+d.addEventListener('click',()=>goTo(i));
+dotsEl.appendChild(d);
 
-  const p = new Image();
-  p.onload = ()=>{ img.src = p.src; if(i===0){ s.classList.add('show'); d.classList.add('active'); } };
-  p.onerror = ()=>{ img.src = src; };
-  p.src = src;
-  slideNodes.push(s);
+const p=new Image();
+p.onload=()=>{img.src=p.src;if(i===0){s.classList.add('show');d.classList.add('active');}};
+p.src=src;
+slideNodes.push(s);
 });
 
 function refreshDots(){
-  Array.from(dotsEl.children).forEach((dot,idx)=> dot.classList.toggle('active', idx===current));
+Array.from(dotsEl.children).forEach((dot,idx)=>dot.classList.toggle('active',idx===current));
 }
 function showCurrent(){
-  slideNodes.forEach((s,idx)=> s.classList.toggle('show', idx===current));
-  refreshDots();
+slideNodes.forEach((s,idx)=>s.classList.toggle('show',idx===current));
+refreshDots();
 }
-function next(){ current=(current+1)%slideNodes.length; showCurrent(); }
-function prev(){ current=(current-1+slideNodes.length)%slideNodes.length; showCurrent(); }
-function goTo(n){ current=n; showCurrent(); }
-document.getElementById('nextBtn').addEventListener('click', next);
-document.getElementById('prevBtn').addEventListener('click', prev);
+function next(){current=(current+1)%slideNodes.length;showCurrent();}
+function prev(){current=(current-1+slideNodes.length)%slideNodes.length;showCurrent();}
+function goTo(n){current=n;showCurrent();}
+document.getElementById('nextBtn').addEventListener('click',next);
+document.getElementById('prevBtn').addEventListener('click',prev);
 
-let sliderInterval = setInterval(next, 4200);
-document.getElementById('sliderRoot').addEventListener('mouseenter', ()=> clearInterval(sliderInterval));
-document.getElementById('sliderRoot').addEventListener('mouseleave', ()=> sliderInterval = setInterval(next, 4200));
+let sliderInterval=setInterval(next,4200);
+document.getElementById('sliderRoot').addEventListener('mouseenter',()=>clearInterval(sliderInterval));
+document.getElementById('sliderRoot').addEventListener('mouseleave',()=>sliderInterval=setInterval(next,4200));
 
-/* ====== CAMERA ====== */
-const MODEL_URL = './models';
-const startBtn = document.getElementById('startBtn');
-const video = document.getElementById('video');
-const moodText = document.getElementById('moodText');
-const moodActions = document.getElementById('moodActions');
-const acceptBtn = document.getElementById('acceptBtn');
-const retryBtn = document.getElementById('retryBtn');
-let detectInterval = null;
-let lastDetected = null;
+/* CAMERA */
+const MODEL_URL='./models';
+const startBtn=document.getElementById('startBtn');
+const video=document.getElementById('video');
+const moodText=document.getElementById('moodText');
+const moodActions=document.getElementById('moodActions');
+const acceptBtn=document.getElementById('acceptBtn');
+const retryBtn=document.getElementById('retryBtn');
 
-startBtn.addEventListener('click', startCamera);
+let detectInterval=null;
+let lastDetected=null;
+
+startBtn.addEventListener('click',startCamera);
 
 async function loadModels(){
-  try{
-    await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
-    await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
-    return true;
-  }catch(e){
-    moodText.innerText = 'Model load failed';
-    return false;
-  }
+try{
+await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
+return true;
+}catch(e){
+moodText.innerText='Model load failed';
+return false;
+}
 }
 
 async function startCamera(){
-  startBtn.disabled = true;
-  moodText.innerText = 'Preparing camera and models...';
+startBtn.disabled=true;
+moodText.innerText='Preparing camera and models...';
 
-  const ok = await loadModels();
-  if(!ok){
-    startBtn.disabled = false;
-    return;
-  }
+const ok=await loadModels();
+if(!ok){startBtn.disabled=false;return;}
 
-  try{
-    const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 }, audio:false });
-    video.srcObject = stream;
-    await video.play();
-    moodText.innerText = 'Detecting mood...';
+try{
+const stream=await navigator.mediaDevices.getUserMedia({video:{width:640,height:480},audio:false});
+video.srcObject=stream;
+await video.play();
 
-    document.getElementById("camWrap").scrollIntoView({
-      behavior: "smooth",
-      block: "center"
-    });
+moodText.innerText='Detecting mood...';
 
-    runDetectionLoop();
-  }catch(err){
-    moodText.innerText = 'Camera error';
-    startBtn.disabled = false;
-  }
+document.getElementById("camWrap").scrollIntoView({
+behavior:"smooth",
+block:"center"
+});
+
+runDetectionLoop();
+}catch(err){
+moodText.innerText='Camera error';
+startBtn.disabled=false;
+}
 }
 
 function runDetectionLoop(){
-  if(detectInterval) clearInterval(detectInterval);
-  detectInterval = setInterval(()=> detectMood(), 450);
+if(detectInterval)clearInterval(detectInterval);
+detectInterval=setInterval(()=>detectMood(),450);
 }
 
 async function detectMood(){
-  if(!video || video.readyState < 2) return;
+if(!video||video.readyState<2)return;
 
-  try{
-    const result = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
-    if(!result){
-      moodText.innerText = 'No face detected — look at camera.';
-      return;
-    }
+try{
+const result=await faceapi.detectSingleFace(video,new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
+if(!result){
+moodText.innerText='No face detected — look at camera.';
+return;
+}
 
-    const exps = result.expressions;
-    const pairs = Object.entries(exps).sort((a,b)=> b[1]-a[1]);
-    const [label,score] = pairs[0];
-    moodText.innerText = `Detected: ${label.toUpperCase()} — ${(score*100).toFixed(0)}%`;
+const exps=result.expressions;
+const pairs=Object.entries(exps).sort((a,b)=>b[1]-a[1]);
+const[label,score]=pairs[0];
 
-    if(score >= 0.55){
-      clearInterval(detectInterval);
-      detectInterval=null;
-      lastDetected={label,score};
-      showConfirmUI(label,score);
-    }
-  } catch(e){}
+moodText.innerText=`Detected: ${label.toUpperCase()} — ${(score*100).toFixed(0)}%`;
+
+if(score>=0.55){
+clearInterval(detectInterval);
+detectInterval=null;
+lastDetected={label,score};
+showConfirmUI(label,score);
+}
+
+}catch(e){}
 }
 
 function showConfirmUI(label,score){
-  moodText.innerText = `FINAL: ${label.toUpperCase()} — ${(score*100).toFixed(0)}%`;
-  moodActions.style.display = 'flex';
+moodText.innerText=`FINAL: ${label.toUpperCase()} — ${(score*100).toFixed(0)}%`;
+moodActions.style.display='flex';
 }
 
-acceptBtn.addEventListener('click', ()=>{
-  if(!lastDetected) return;
+acceptBtn.addEventListener('click',()=>{
+if(!lastDetected)return;
 
-  const mood = lastDetected.label.toLowerCase();
-  const score = (lastDetected.score*100).toFixed(0);
+const mood=lastDetected.label.toLowerCase();
+const score=(lastDetected.score*100).toFixed(0);
 
-  moodActions.style.display = 'none';
-  moodText.innerText = `LOCKED: ${mood.toUpperCase()}`;
+moodActions.style.display='none';
+moodText.innerText=`LOCKED: ${mood.toUpperCase()}`;
 
-  document.body.style.transition = "opacity 0.7s ease";
-  document.body.style.opacity = "0";
+document.body.style.transition="opacity 0.7s ease";
+document.body.style.opacity="0";
 
-  setTimeout(() => {
-    window.location.href = `assist.html?mood=${mood}&score=${score}`;
-  }, 800);
+setTimeout(()=>{
+window.location.href=`assist.html?mood=${mood}&score=${score}`;
+},800);
 });
 
-retryBtn.addEventListener('click', ()=>{
-  lastDetected=null;
-  moodActions.style.display='none';
-  moodText.innerText='Retrying detection...';
-  setTimeout(()=> runDetectionLoop(), 600);
+retryBtn.addEventListener('click',()=>{
+lastDetected=null;
+moodActions.style.display='none';
+moodText.innerText='Retrying detection...';
+setTimeout(()=>runDetectionLoop(),600);
 });
 
-window.addEventListener('beforeunload', ()=>{
-  try{ if(video && video.srcObject) video.srcObject.getTracks().forEach(t=>t.stop()); }catch(e){}
+window.addEventListener('beforeunload',()=>{
+try{
+if(video&&video.srcObject)
+video.srcObject.getTracks().forEach(t=>t.stop());
+}catch(e){}
 });
 </script>
 </body>
 </html>
-
 
 
 
