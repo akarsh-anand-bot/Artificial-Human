@@ -25,6 +25,8 @@ gtag('config', 'G-9T45FS7BXJ');
 
 <!-- face-api.js -->
 <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+ <!--bg-->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 
 <style>
 
@@ -43,7 +45,15 @@ font-family:'Poppins',sans-serif;
 color:#fff;
 overflow-x:hidden;
 }
-
+#particles-js{
+position:fixed;
+width:100%;
+height:100%;
+top:0;
+left:0;
+z-index:-1;
+background: radial-gradient(circle at center,#031b14,#000);
+}
 /* ---- HERO SECTION ---- */
 
 .hero{
@@ -346,7 +356,7 @@ opacity:1;
 </head>
 
 <body>
-
+<div id="particles-js"></div>
 <!-- HERO -->
 
 <div class="hero">
@@ -668,9 +678,38 @@ video.srcObject.getTracks().forEach(t=>t.stop());
 }catch(e){}
 
 });
+  particlesJS("particles-js", {
+  particles: {
+    number: {
+      value: 80,
+      density: { enable: true, value_area: 800 }
+    },
+    color: { value: "#00ffa6" },
+    shape: { type: "circle" },
+    opacity: { value: 0.6 },
+    size: { value: 3 },
+    line_linked: {
+      enable: true,
+      distance: 150,
+      color: "#00ffa6",
+      opacity: 0.4,
+      width: 1
+    },
+    move: {
+      enable: true,
+      speed: 2
+    }
+  },
+  interactivity: {
+    detect_on: "canvas",
+    events: {
+      onhover: { enable: true, mode: "grab" }
+    }
+  },
+  retina_detect: true
+});
 
 </script>
-
 </body>
 </html>
 
