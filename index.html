@@ -47,19 +47,21 @@ overflow-x:hidden;
 }
 #particles-js{
 position:fixed;
-width:100%;
-height:100%;
 top:0;
 left:0;
+width:100%;
+height:100%;
 z-index:-1;
-background: radial-gradient(circle at center,#031b14,#000);
+background:#000;
 }
 /* ---- HERO SECTION ---- */
 
 .hero{
 padding:70px 20px 40px;
 text-align:center;
-background: radial-gradient(circle at 50% -20%, rgba(10,255,150,0.08), transparent 60%);
+background: transparent;
+position: relative;
+z-index: 1;
 }
 
 .brand-logo{
@@ -658,7 +660,6 @@ window.location.href = `assist.html?mood=${mood}&score=${score}`;
 }, 800);
 
 });
-
 retryBtn.addEventListener('click', ()=>{
 
 lastDetected=null;
@@ -678,12 +679,13 @@ video.srcObject.getTracks().forEach(t=>t.stop());
 }catch(e){}
 
 });
-  particlesJS("particles-js", {
+
+
+window.addEventListener("load", function() {
+
+particlesJS("particles-js", {
   particles: {
-    number: {
-      value: 80,
-      density: { enable: true, value_area: 800 }
-    },
+    number: { value: 80 },
     color: { value: "#00ffa6" },
     shape: { type: "circle" },
     opacity: { value: 0.6 },
@@ -699,16 +701,10 @@ video.srcObject.getTracks().forEach(t=>t.stop());
       enable: true,
       speed: 2
     }
-  },
-  interactivity: {
-    detect_on: "canvas",
-    events: {
-      onhover: { enable: true, mode: "grab" }
-    }
-  },
-  retina_detect: true
+  }
 });
 
+});
 </script>
 </body>
 </html>
